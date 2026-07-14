@@ -16,6 +16,7 @@ class HumanitarianCase extends Model
         'name',
         'phone',
         'national_id',
+        'area',
         'notes',
         'type',
     ];

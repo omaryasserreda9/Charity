@@ -24,6 +24,8 @@
             <dd>{{ $humanitarianCase->phone }}</dd>
             <dt>رقم الهوية</dt>
             <dd>{{ $humanitarianCase->national_id }}</dd>
+            <dt>المنطقة</dt>
+            <dd>{{ $humanitarianCase->area ?: '—' }}</dd>
             <dt>نوع الحالة</dt>
             <dd>{{ $humanitarianCase->typeLabel() }}</dd>
             <dt>ملاحظات</dt>

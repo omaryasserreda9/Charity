@@ -27,6 +27,7 @@
                         <th>الاسم</th>
                         <th>رقم الجوال</th>
                         <th>رقم الهوية</th>
+                        <th>المنطقة</th>
                         <th>النوع</th>
                     </tr>
                 </thead>
@@ -44,11 +45,12 @@
                         <td>{{ $case->name }}</td>
                         <td>{{ $case->phone }}</td>
                         <td>{{ $case->national_id }}</td>
+                        <td>{{ $case->area ?: '—' }}</td>
                         <td>{{ $case->typeLabel() }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">لا توجد حالات إنسانية مسجلة.</td>
+                        <td colspan="6" class="text-center text-muted py-4">لا توجد حالات إنسانية مسجلة.</td>
                     </tr>
                     @endforelse
                 </tbody>

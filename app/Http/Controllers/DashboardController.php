@@ -52,7 +52,7 @@ class DashboardController extends Controller
             ->get();
 
         $pendingCampaigns = Campaign::query()
-            ->with('category')
+            ->with(['category', 'district'])
             ->where('status', 'pending')
             ->latest('campaign_date')
             ->limit(5)

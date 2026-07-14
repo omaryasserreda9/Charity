@@ -20,6 +20,12 @@
     </div>
 
     <div class="col-12 col-md-6">
+        <label class="form-label" for="area">المنطقة</label>
+        <input id="area" type="text" name="area" value="{{ old('area', $humanitarianCase->area ?? '') }}" class="form-control @error('area') is-invalid @enderror" required>
+        @error('area')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="col-12 col-md-6">
         <label class="form-label" for="type">نوع الحالة</label>
         <select id="type" name="type" class="form-select @error('type') is-invalid @enderror" required>
             @foreach(\App\Models\HumanitarianCase::typeOptions() as $value => $label)

@@ -17,7 +17,7 @@
         </div>
 
         <form method="GET" action="{{ route('humanitarian-cases.index') }}" class="filter-bar mb-3">
-            <input type="search" name="search" value="{{ $filters['search'] ?? '' }}" class="form-control" placeholder="بحث بالاسم أو الجوال أو رقم الهوية">
+            <input type="search" name="search" value="{{ $filters['search'] ?? '' }}" class="form-control" placeholder="بحث بالاسم أو الجوال أو رقم الهوية أو المنطقة">
             <select name="type" class="form-select">
                 <option value="">كل الأنواع</option>
                 @foreach(\App\Models\HumanitarianCase::typeOptions() as $value => $label)
@@ -36,6 +36,7 @@
                         <th>الاسم</th>
                         <th>الجوال</th>
                         <th>رقم الهوية</th>
+                        <th>المنطقة</th>
                         <th>النوع</th>
                         <th>المرفقات</th>
                         <th>الإجراءات</th>
@@ -48,6 +49,7 @@
                             <td>{{ $case->name }}</td>
                             <td>{{ $case->phone }}</td>
                             <td>{{ $case->national_id }}</td>
+                            <td>{{ $case->area ?: '—' }}</td>
                             <td>
                                 <span class="badge rounded-pill {{ $case->type === 'mine' ? 'text-bg-warning' : 'text-bg-info' }}">
                                     {{ $case->typeLabel() }}

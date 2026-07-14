@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone', 20);
             $table->string('national_id', 20)->unique();
+            $table->string('area');
             $table->text('notes')->nullable();
             $table->enum('type', ['mine', 'seasonal']);
             $table->timestamps();

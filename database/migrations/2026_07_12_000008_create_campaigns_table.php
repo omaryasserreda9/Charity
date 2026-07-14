@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('campaigns', function (Blueprint $table): void {
             $table->id();
-            $table->string('area');
+            $table->foreignId('district_id')->constrained()->restrictOnDelete();
             $table->string('title');
             $table->foreignId('campaign_category_id')->constrained()->restrictOnDelete();
             $table->enum('status', ['pending', 'done'])->default('pending');

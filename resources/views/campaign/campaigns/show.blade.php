@@ -22,7 +22,7 @@
 
         <dl class="details-list">
             <dt>المنطقة</dt>
-            <dd>{{ $campaign->area }}</dd>
+            <dd>{{ $campaign->district->title }}</dd>
             <dt>التصنيف</dt>
             <dd>{{ $campaign->category->title }}</dd>
             <dt>تاريخ الحملة</dt>
@@ -44,10 +44,11 @@
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>الاسم</th>
-                            <th>رقم الجوال</th>
-                            <th>رقم الهوية</th>
-                            <th>النوع</th>
+                        <th>الاسم</th>
+                        <th>رقم الجوال</th>
+                        <th>رقم الهوية</th>
+                        <th>المنطقة</th>
+                        <th>النوع</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,6 +59,7 @@
                                 </td>
                                 <td>{{ $case->phone }}</td>
                                 <td>{{ $case->national_id }}</td>
+                                <td>{{ $case->area ?: '—' }}</td>
                                 <td>{{ $case->typeLabel() }}</td>
                             </tr>
                         @endforeach

@@ -21,7 +21,8 @@ class HumanitarianCaseController extends Controller
                 $query->where(function ($query) use ($search): void {
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('national_id', 'like', "%{$search}%");
+                        ->orWhere('national_id', 'like', "%{$search}%")
+                        ->orWhere('area', 'like', "%{$search}%");
                 });
             })
             ->when($filters['type'] ?? null, fn ($query, string $type) => $query->where('type', $type))
@@ -101,6 +102,7 @@ class HumanitarianCaseController extends Controller
                 'regex:/^[2-9][0-9]{13}$/',
                 Rule::unique('humanitarian_cases')->ignore(optional($case)->id),
             ],
+            'area' => ['required', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
             'type' => ['required', Rule::in(['mine', 'seasonal'])],
             'attachments' => ['nullable', 'array'],

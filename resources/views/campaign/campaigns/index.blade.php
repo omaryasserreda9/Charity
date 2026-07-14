@@ -18,6 +18,14 @@
 
         <form method="GET" action="{{ route('campaigns.index') }}" class="filter-bar mb-3">
             <input type="search" name="search" value="{{ $filters['search'] ?? '' }}" class="form-control" placeholder="بحث بالعنوان أو المنطقة">
+            <select name="district_id" class="form-select">
+                <option value="">كل المناطق</option>
+                @foreach($districts as $district)
+                    <option value="{{ $district->id }}" {{ (string) ($filters['district_id'] ?? '') === (string) $district->id ? 'selected' : '' }}>
+                        {{ $district->title }}
+                    </option>
+                @endforeach
+            </select>
             <select name="campaign_category_id" class="form-select">
                 <option value="">كل التصنيفات</option>
                 @foreach($categories as $category)
@@ -49,7 +57,7 @@
                         <tr>
                             <td>{{ $campaign->id }}</td>
                             <td>{{ $campaign->title }}</td>
-                            <td>{{ $campaign->area }}</td>
+                            <td>{{ $campaign->district->title }}</td>
                             <td>{{ $campaign->category->title }}</td>
                             <td>
                                 <span class="badge rounded-pill {{ $campaign->status === 'done' ? 'text-bg-success' : 'text-bg-secondary' }}">

@@ -7,6 +7,7 @@ use App\Http\Controllers\BudgetOperationController;
 use App\Http\Controllers\CampaignCategoryController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\HumanitarianCaseController;
 use App\Http\Controllers\HumanitarianCaseFileController;
 use App\Http\Controllers\InventoryCategoryController;
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('inventory-categories', InventoryCategoryController::class);
     Route::resource('inventory-operations', InventoryOperationController::class);
     Route::resource('humanitarian-cases', HumanitarianCaseController::class);
+    Route::resource('districts', DistrictController::class);
     Route::get('campaigns/{campaign}/cases', [CampaignController::class, 'cases'])->name('campaigns.cases');
     Route::put('campaigns/{campaign}/cases', [CampaignController::class, 'syncCases'])->name('campaigns.cases.sync');
     Route::patch('campaigns/{campaign}/mark-done', [CampaignController::class, 'markDone'])->name('campaigns.mark-done');

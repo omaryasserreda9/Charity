@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use App\Models\CampaignCategory;
+use App\Models\District;
 use App\Models\HumanitarianCase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,19 +15,21 @@ class CampaignController extends Controller
 {
     public function index(Request $request): View
     {
-        $filters = $request->only(['search', 'campaign_category_id']);
+        $filters = $request->only(['search', 'campaign_category_id', 'district_id']);
         $categories = CampaignCategory::orderBy('title')->get();
+        $districts = District::orderBy('title')->get();
 
         $campaigns = Campaign::query()
-            ->with('category')
+            ->with(['category', 'district'])
             ->withCount('humanitarianCases')
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('title', 'like', "%{$search}%")
-                        ->orWhere('area', 'like', "%{$search}%");
+                        ->orWhereHas('district', fn ($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
                 });
             })
             ->when($filters['campaign_category_id'] ?? null, fn ($query, $categoryId) => $query->where('campaign_category_id', $categoryId))
+            ->when($filters['district_id'] ?? null, fn ($query, $districtId) => $query->where('district_id', $districtId))
             ->latest('campaign_date')
             ->latest()
             ->paginate(10)
@@ -34,18 +37,19 @@ class CampaignController extends Controller
 
         $breadcrumbs = ['الحملات' => route('campaigns.index')];
 
-        return view('campaign.campaigns.index', compact('campaigns', 'categories', 'filters', 'breadcrumbs'));
+        return view('campaign.campaigns.index', compact('campaigns', 'categories', 'districts', 'filters', 'breadcrumbs'));
     }
 
     public function create(): View
     {
         $categories = CampaignCategory::orderBy('title')->get();
+        $districts = District::orderBy('title')->get();
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
             'إضافة حملة' => route('campaigns.create'),
         ];
 
-        return view('campaign.campaigns.create', compact('categories', 'breadcrumbs'));
+        return view('campaign.campaigns.create', compact('categories', 'districts', 'breadcrumbs'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -57,7 +61,7 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign): View
     {
-        $campaign->load(['category', 'humanitarianCases']);
+        $campaign->load(['category', 'district', 'humanitarianCases']);
 
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
@@ -70,12 +74,13 @@ class CampaignController extends Controller
     public function edit(Campaign $campaign): View
     {
         $categories = CampaignCategory::orderBy('title')->get();
+        $districts = District::orderBy('title')->get();
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
             'تعديل الحملة' => route('campaigns.edit', $campaign),
         ];
 
-        return view('campaign.campaigns.edit', compact('campaign', 'categories', 'breadcrumbs'));
+        return view('campaign.campaigns.edit', compact('campaign', 'categories', 'districts', 'breadcrumbs'));
     }
 
     public function update(Request $request, Campaign $campaign): RedirectResponse
@@ -134,7 +139,7 @@ class CampaignController extends Controller
     private function validatedAttributes(Request $request): array
     {
         return $request->validate([
-            'area' => ['required', 'string', 'max:255'],
+            'district_id' => ['required', 'exists:districts,id'],
             'title' => ['required', 'string', 'max:255'],
             'campaign_category_id' => ['required', 'exists:campaign_categories,id'],
             'status' => ['required', Rule::in(['pending', 'done'])],

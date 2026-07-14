@@ -75,7 +75,7 @@
                 <li>
                     <a href="{{ route('campaigns.show', $campaign) }}">
                         <strong>{{ $campaign->title }}</strong>
-                        <small>{{ $campaign->area }} · {{ optional($campaign->campaign_date)->format('Y-m-d') }}</small>
+                        <small>{{ $campaign->district->title }} · {{ optional($campaign->campaign_date)->format('Y-m-d') }}</small>
                     </a>
                 </li>
                 @endforeach

@@ -13,7 +13,7 @@ class Campaign extends Model
     use HasFactory;
 
     protected $fillable = [
-        'area',
+        'district_id',
         'title',
         'campaign_category_id',
         'status',
@@ -25,6 +25,11 @@ class Campaign extends Model
         return [
             'campaign_date' => 'date',
         ];
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     public function category(): BelongsTo

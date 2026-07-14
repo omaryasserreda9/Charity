@@ -24,6 +24,7 @@
         ['label' => 'تصنيفات المخزون', 'icon' => 'fa-boxes-stacked', 'route' => 'inventory-categories.index', 'active' => request()->routeIs('inventory-categories.*')],
         ['label' => 'عمليات المخزون', 'icon' => 'fa-warehouse', 'route' => 'inventory-operations.index', 'active' => request()->routeIs('inventory-operations.*')],
         ['label' => 'الحالات الإنسانية', 'icon' => 'fa-users', 'route' => 'humanitarian-cases.index', 'active' => request()->routeIs('humanitarian-cases.*') || request()->routeIs('humanitarian-case-files.*')],
+        ['label' => 'المناطق', 'icon' => 'fa-map-location-dot', 'route' => 'districts.index', 'active' => request()->routeIs('districts.*')],
         ['label' => 'تصنيفات الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*')],
         ['label' => 'الحملات', 'icon' => 'fa-bullhorn', 'route' => 'campaigns.index', 'active' => request()->routeIs('campaigns.*')],
         ['label' => 'التقارير', 'icon' => 'fa-file-invoice', 'route' => null, 'active' => false],
