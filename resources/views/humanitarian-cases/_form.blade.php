@@ -39,6 +39,14 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
     </div>
 
     <div class="col-12 col-md-6">
+        <label class="form-label" for="referrer_id">الدليل</label>
+        <select id="referrer_id" name="referrer_id" class="form-select @error('referrer_id') is-invalid @enderror">
+            <option value="">اختر المنطقة أولاً</option>
+        </select>
+        @error('referrer_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="col-12 col-md-6">
         <label class="form-label" for="type">نوع الحالة</label>
         <select id="type" name="type" class="form-select @error('type') is-invalid @enderror" required>
             @foreach(\App\Models\HumanitarianCase::typeOptions() as $value => $label)
@@ -46,6 +54,13 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
             @endforeach
         </select>
         @error('type')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="col-12">
+        <label class="form-label" for="research_team">فريق البحث</label>
+        <input id="research_team" type="text" name="research_team" value="{{ old('research_team', $humanitarianCase->research_team ?? '') }}" class="form-control @error('research_team') is-invalid @enderror">
+        <div class="form-text">اكتب أسماء أفراد فريق البحث (اختياري).</div>
+        @error('research_team')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
     <div class="col-12">
@@ -466,6 +481,62 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
         const familyMembersBody = document.getElementById('familyMembersTableBody');
         const addButton = document.getElementById('addFamilyMember');
         const template = document.getElementById('familyMemberRowTemplate');
+        const referrers = @json($referrers->map(fn($referrer) => [
+            'id' => $referrer->id,
+            'name' => $referrer->name,
+            'district_id' => $referrer->district_id,
+        ]));
+        const districtSelect = document.getElementById('district_id');
+        const referrerSelect = document.getElementById('referrer_id');
+        const initialReferrer = @json(old('referrer_id', isset($humanitarianCase) ? $humanitarianCase->referrer_id : ''));
+
+        function updateReferrerOptions() {
+            if (!districtSelect || !referrerSelect) return;
+
+            const selectedDistrict = districtSelect.value;
+            const selectedReferrer = String(referrerSelect.value || initialReferrer);
+            referrerSelect.innerHTML = '';
+
+            if (!selectedDistrict) {
+                referrerSelect.disabled = true;
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'اختر المنطقة أولاً';
+                referrerSelect.appendChild(option);
+                return;
+            }
+
+            referrerSelect.disabled = false;
+            const blankOption = document.createElement('option');
+            blankOption.value = '';
+            blankOption.textContent = 'بدون دليل';
+            referrerSelect.appendChild(blankOption);
+
+            const filtered = referrers.filter(item => String(item.district_id) === String(selectedDistrict));
+            if (filtered.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.disabled = true;
+                option.textContent = 'لا يوجد دليل متاح';
+                referrerSelect.appendChild(option);
+                return;
+            }
+
+            filtered.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.name;
+                if (String(item.id) === String(selectedReferrer)) {
+                    option.selected = true;
+                }
+                referrerSelect.appendChild(option);
+            });
+        }
+
+        if (districtSelect && referrerSelect) {
+            districtSelect.addEventListener('change', updateReferrerOptions);
+            updateReferrerOptions();
+        }
 
         if (!familyMembersBody || !addButton || !template) return;
 

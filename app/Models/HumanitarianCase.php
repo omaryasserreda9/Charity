@@ -9,6 +9,7 @@ use App\Models\CaseExpense;
 use App\Models\CaseHomeDescription;
 use App\Models\CaseIncome;
 use App\Models\CaseNeed;
+use App\Models\CaseReferrer;
 use App\Models\District;
 use App\Models\FamilyMember;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,8 @@ class HumanitarianCase extends Model
         'phone',
         'national_id',
         'district_id',
+        'referrer_id',
+        'research_team',
         'notes',
         'type',
     ];
@@ -80,6 +83,11 @@ class HumanitarianCase extends Model
     public function caseNeed(): HasOne
     {
         return $this->hasOne(CaseNeed::class);
+    }
+
+    public function referrer(): BelongsTo
+    {
+        return $this->belongsTo(CaseReferrer::class, 'referrer_id');
     }
 
     public function typeLabel(): string

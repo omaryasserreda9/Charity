@@ -10,6 +10,7 @@ use App\Http\Controllers\CaseExpenseController;
 use App\Http\Controllers\CaseHomeDescriptionController;
 use App\Http\Controllers\CaseIncomeController;
 use App\Http\Controllers\CaseNeedController;
+use App\Http\Controllers\CaseReferrerController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\HumanitarianCaseController;
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('inventory-categories', InventoryCategoryController::class);
     Route::resource('inventory-operations', InventoryOperationController::class);
     Route::resource('humanitarian-cases', HumanitarianCaseController::class);
+    Route::resource('case-referrers', CaseReferrerController::class);
     Route::resource('humanitarian-cases.family-members', FamilyMemberController::class)->shallow();
     Route::resource('humanitarian-cases.case-incomes', CaseIncomeController::class)->shallow();
     Route::resource('humanitarian-cases.case-expenses', CaseExpenseController::class)->shallow();

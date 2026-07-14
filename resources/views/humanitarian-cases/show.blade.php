@@ -26,6 +26,10 @@
             <dd>{{ $humanitarianCase->national_id }}</dd>
             <dt>المنطقة</dt>
             <dd>{{ $humanitarianCase->district->title ?? '—' }}</dd>
+            <dt>الدليل</dt>
+            <dd>{{ $humanitarianCase->referrer->name ?? '—' }}</dd>
+            <dt>فريق البحث</dt>
+            <dd>{{ $humanitarianCase->research_team ?: '—' }}</dd>
             <dt>نوع الحالة</dt>
             <dd>{{ $humanitarianCase->typeLabel() }}</dd>
             <dt>ملاحظات</dt>
