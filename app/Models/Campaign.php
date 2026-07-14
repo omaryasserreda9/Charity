@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Campaign extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'area',
+        'title',
+        'campaign_category_id',
+        'status',
+        'campaign_date',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'campaign_date' => 'date',
+        ];
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(CampaignCategory::class, 'campaign_category_id');
+    }
+
+    public function operations(): HasMany
+    {
+        return $this->hasMany(CampaignOperation::class);
+    }
+
+    public function humanitarianCases(): BelongsToMany
+    {
+        return $this->belongsToMany(HumanitarianCase::class, 'campaign_operations')
+            ->withTimestamps();
+    }
+
+    public function statusLabel(): string
+    {
+        switch ($this->status) {
+            case 'pending':
+                return 'قيد التنفيذ';
+
+            case 'done':
+                return 'منجزة';
+
+            default:
+                return $this->status;
+        }
+    }
+
+    public static function statusOptions(): array
+    {
+        return [
+            'pending' => 'قيد التنفيذ',
+            'done' => 'منجزة',
+        ];
+    }
+}
