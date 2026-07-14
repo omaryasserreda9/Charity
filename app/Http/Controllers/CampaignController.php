@@ -97,11 +97,26 @@ class CampaignController extends Controller
         return redirect()->route('campaigns.index')->with('success', 'تم حذف الحملة بنجاح.');
     }
 
-    public function cases(Campaign $campaign): View
+    public function cases(Request $request, Campaign $campaign): View
     {
+        $filters = $request->only(['search', 'district_id']);
         $campaign->load('category');
         $selectedCaseIds = $campaign->humanitarianCases()->pluck('humanitarian_cases.id')->all();
-        $humanitarianCases = HumanitarianCase::orderBy('name')->get();
+        $districts = District::orderBy('title')->get();
+
+        $humanitarianCases = HumanitarianCase::query()
+            ->with('district')
+            ->when($filters['search'] ?? null, function ($query, string $search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('national_id', 'like', "%{$search}%")
+                        ->orWhereHas('district', fn ($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
+                });
+            })
+            ->when($filters['district_id'] ?? null, fn ($query, $districtId) => $query->where('district_id', $districtId))
+            ->orderBy('name')
+            ->get();
 
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
@@ -109,7 +124,7 @@ class CampaignController extends Controller
             'الحالات المرتبطة' => route('campaigns.cases', $campaign),
         ];
 
-        return view('campaign.campaigns.cases', compact('campaign', 'humanitarianCases', 'selectedCaseIds', 'breadcrumbs'));
+        return view('campaign.campaigns.cases', compact('campaign', 'humanitarianCases', 'selectedCaseIds', 'districts', 'filters', 'breadcrumbs'));
     }
 
     public function syncCases(Request $request, Campaign $campaign): RedirectResponse

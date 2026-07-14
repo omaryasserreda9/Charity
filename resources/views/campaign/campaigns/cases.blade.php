@@ -13,6 +13,18 @@
         <a href="{{ route('campaigns.show', $campaign) }}" class="btn btn-light btn-sm">عودة للحملة</a>
     </div>
 
+    <form method="GET" action="{{ route('campaigns.cases', $campaign) }}" class="filter-bar mb-3">
+        <input type="search" name="search" value="{{ $filters['search'] ?? '' }}" class="form-control" placeholder="بحث بالاسم أو الجوال أو رقم الهوية أو المنطقة">
+        <select name="district_id" class="form-select">
+            <option value="">كل المناطق</option>
+            @foreach($districts as $district)
+                <option value="{{ $district->id }}" {{ (string) ($filters['district_id'] ?? '') === (string) $district->id ? 'selected' : '' }}>{{ $district->title }}</option>
+            @endforeach
+        </select>
+        <button type="submit" class="btn btn-primary">تصفية</button>
+        <a href="{{ route('campaigns.cases', $campaign) }}" class="btn btn-light">إعادة ضبط</a>
+    </form>
+
     <form method="POST" action="{{ route('campaigns.cases.sync', $campaign) }}">
         @csrf
         @method('PUT')
@@ -45,7 +57,7 @@
                         <td>{{ $case->name }}</td>
                         <td>{{ $case->phone }}</td>
                         <td>{{ $case->national_id }}</td>
-                        <td>{{ $case->area ?: '—' }}</td>
+                        <td>{{ $case->district->title ?? $case->area ?: '—' }}</td>
                         <td>{{ $case->typeLabel() }}</td>
                     </tr>
                     @empty

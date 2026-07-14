@@ -25,7 +25,7 @@
             <dt>رقم الهوية</dt>
             <dd>{{ $humanitarianCase->national_id }}</dd>
             <dt>المنطقة</dt>
-            <dd>{{ $humanitarianCase->area ?: '—' }}</dd>
+            <dd>{{ $humanitarianCase->district->title ?? '—' }}</dd>
             <dt>نوع الحالة</dt>
             <dd>{{ $humanitarianCase->typeLabel() }}</dd>
             <dt>ملاحظات</dt>

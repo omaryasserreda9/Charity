@@ -59,7 +59,7 @@
                                 </td>
                                 <td>{{ $case->phone }}</td>
                                 <td>{{ $case->national_id }}</td>
-                                <td>{{ $case->area ?: '—' }}</td>
+                                <td>{{ $case->district->title ?? $case->area ?: '—' }}</td>
                                 <td>{{ $case->typeLabel() }}</td>
                             </tr>
                         @endforeach

@@ -20,9 +20,14 @@
     </div>
 
     <div class="col-12 col-md-6">
-        <label class="form-label" for="area">المنطقة</label>
-        <input id="area" type="text" name="area" value="{{ old('area', $humanitarianCase->area ?? '') }}" class="form-control @error('area') is-invalid @enderror" required>
-        @error('area')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        <label class="form-label" for="district_id">المنطقة</label>
+        <select id="district_id" name="district_id" class="form-select @error('district_id') is-invalid @enderror" required>
+            <option value="">اختر المنطقة</option>
+            @foreach($districts as $district)
+                <option value="{{ $district->id }}" {{ (string) old('district_id', isset($humanitarianCase) ? $humanitarianCase->district_id : '') === (string) $district->id ? 'selected' : '' }}>{{ $district->title }}</option>
+            @endforeach
+        </select>
+        @error('district_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
     <div class="col-12 col-md-6">

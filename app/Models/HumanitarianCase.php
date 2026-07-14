@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Campaign;
+use App\Models\District;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +19,7 @@ class HumanitarianCase extends Model
         'name',
         'phone',
         'national_id',
-        'area',
+        'district_id',
         'notes',
         'type',
     ];
@@ -35,6 +38,11 @@ class HumanitarianCase extends Model
     public function files(): HasMany
     {
         return $this->hasMany(HumanitarianCaseFile::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     public function campaigns(): BelongsToMany
