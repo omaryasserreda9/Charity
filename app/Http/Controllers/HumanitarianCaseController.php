@@ -94,12 +94,20 @@ class HumanitarianCaseController extends Controller
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20'],
-            'national_id' => ['required', 'string', 'max:20', Rule::unique('humanitarian_cases')->ignore(optional($case)->id)],
+            'phone' => ['required', 'string', 'regex:/^0[0-9]{10}$/'],
+            'national_id' => [
+                'required',
+                'string',
+                'regex:/^[2-9][0-9]{13}$/',
+                Rule::unique('humanitarian_cases')->ignore(optional($case)->id),
+            ],
             'notes' => ['nullable', 'string'],
             'type' => ['required', Rule::in(['mine', 'seasonal'])],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['file', 'max:10240', 'mimes:pdf,jpg,jpeg,png,webp,doc,docx'],
+        ], [
+            'phone.regex' => 'رقم الجوال يجب أن يكون 11 رقمًا ويبدأ بـ 0.',
+            'national_id.regex' => 'رقم الهوية يجب أن يكون 14 رقمًا ويبدأ بـ 2 أو أعلى (لا يبدأ بـ 0 أو 1).',
         ]);
     }
 

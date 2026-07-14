@@ -9,13 +9,13 @@
 
     <div class="col-12 col-md-6">
         <label class="form-label" for="phone">رقم الجوال</label>
-        <input id="phone" type="text" name="phone" value="{{ old('phone', $humanitarianCase->phone ?? '') }}" class="form-control @error('phone') is-invalid @enderror" required>
+        <input id="phone" type="text" name="phone" value="{{ old('phone', $humanitarianCase->phone ?? '') }}" class="form-control @error('phone') is-invalid @enderror" required maxlength="11" inputmode="numeric" pattern="0[0-9]{10}" title="يجب أن يكون 11 رقمًا ويبدأ بـ 0">
         @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
     <div class="col-12 col-md-6">
         <label class="form-label" for="national_id">رقم الهوية</label>
-        <input id="national_id" type="text" name="national_id" value="{{ old('national_id', $humanitarianCase->national_id ?? '') }}" class="form-control @error('national_id') is-invalid @enderror" required>
+        <input id="national_id" type="text" name="national_id" value="{{ old('national_id', $humanitarianCase->national_id ?? '') }}" class="form-control @error('national_id') is-invalid @enderror" required maxlength="14" inputmode="numeric" pattern="[2-9][0-9]{13}" title="يجب أن يكون 14 رقمًا ويبدأ بـ 2 أو أعلى">
         @error('national_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
