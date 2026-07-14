@@ -6,12 +6,17 @@ use App\Http\Controllers\BudgetCategoryController;
 use App\Http\Controllers\BudgetOperationController;
 use App\Http\Controllers\CampaignCategoryController;
 use App\Http\Controllers\CampaignController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CaseExpenseController;
+use App\Http\Controllers\CaseHomeDescriptionController;
+use App\Http\Controllers\CaseIncomeController;
+use App\Http\Controllers\CaseNeedController;
 use App\Http\Controllers\DistrictController;
+use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\HumanitarianCaseController;
 use App\Http\Controllers\HumanitarianCaseFileController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\InventoryOperationController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,6 +38,11 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('inventory-categories', InventoryCategoryController::class);
     Route::resource('inventory-operations', InventoryOperationController::class);
     Route::resource('humanitarian-cases', HumanitarianCaseController::class);
+    Route::resource('humanitarian-cases.family-members', FamilyMemberController::class)->shallow();
+    Route::resource('humanitarian-cases.case-incomes', CaseIncomeController::class)->shallow();
+    Route::resource('humanitarian-cases.case-expenses', CaseExpenseController::class)->shallow();
+    Route::resource('humanitarian-cases.case-home-descriptions', CaseHomeDescriptionController::class)->shallow();
+    Route::resource('humanitarian-cases.case-needs', CaseNeedController::class)->shallow();
     Route::resource('districts', DistrictController::class);
     Route::get('campaigns/{campaign}/cases', [CampaignController::class, 'cases'])->name('campaigns.cases');
     Route::put('campaigns/{campaign}/cases', [CampaignController::class, 'syncCases'])->name('campaigns.cases.sync');

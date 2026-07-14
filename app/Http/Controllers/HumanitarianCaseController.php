@@ -52,6 +52,7 @@ class HumanitarianCaseController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $case = HumanitarianCase::create($this->validatedAttributes($request));
+        $this->saveRelatedData($request, $case);
         $this->storeAttachments($request, $case);
 
         return redirect()->route('humanitarian-cases.index')->with('success', 'تم إنشاء الحالة بنجاح.');
@@ -59,7 +60,7 @@ class HumanitarianCaseController extends Controller
 
     public function show(HumanitarianCase $humanitarianCase): View
     {
-        $humanitarianCase->load(['files', 'district']);
+        $humanitarianCase->load(['files', 'district', 'familyMembers', 'caseIncome', 'caseExpense', 'caseHomeDescription', 'caseNeed']);
 
         $breadcrumbs = [
             'الحالات الإنسانية' => route('humanitarian-cases.index'),
@@ -71,7 +72,7 @@ class HumanitarianCaseController extends Controller
 
     public function edit(HumanitarianCase $humanitarianCase): View
     {
-        $humanitarianCase->load('files');
+        $humanitarianCase->load(['files', 'familyMembers', 'caseIncome', 'caseExpense', 'caseHomeDescription', 'caseNeed']);
         $districts = District::orderBy('title')->get();
 
         $breadcrumbs = [
@@ -85,6 +86,7 @@ class HumanitarianCaseController extends Controller
     public function update(Request $request, HumanitarianCase $humanitarianCase): RedirectResponse
     {
         $humanitarianCase->update($this->validatedAttributes($request, $humanitarianCase));
+        $this->saveRelatedData($request, $humanitarianCase);
         $this->storeAttachments($request, $humanitarianCase);
 
         return redirect()->route('humanitarian-cases.index')->with('success', 'تم تحديث الحالة بنجاح.');
@@ -136,5 +138,145 @@ class HumanitarianCaseController extends Controller
                 'size' => $file->getSize(),
             ]);
         }
+    }
+
+    private function saveRelatedData(Request $request, HumanitarianCase $case): void
+    {
+        $validated = $this->validatedRelatedAttributes($request);
+
+        $this->saveFamilyMembers($validated['family_members'] ?? [], $case);
+
+        $caseIncome = $validated['case_income'] ?? [];
+        $caseIncome['total_income'] = $this->computeDecimalTotal([
+            $caseIncome['job_income'] ?? null,
+            $caseIncome['pension_income'] ?? null,
+            $caseIncome['charity_income'] ?? null,
+            $caseIncome['other_income'] ?? null,
+        ]);
+        $this->saveSingleRelatedRecord($case, 'caseIncome', $caseIncome);
+
+        $caseExpense = $validated['case_expense'] ?? [];
+        $caseExpense['total_expenses'] = $this->computeDecimalTotal([
+            $caseExpense['home_rent'] ?? null,
+            $caseExpense['school_expenses'] ?? null,
+            $caseExpense['utilities'] ?? null,
+            $caseExpense['medicine'] ?? null,
+            $caseExpense['nutrition'] ?? null,
+            $caseExpense['other_expenses'] ?? null,
+        ]);
+        $this->saveSingleRelatedRecord($case, 'caseExpense', $caseExpense);
+
+        $this->saveSingleRelatedRecord($case, 'caseHomeDescription', $validated['case_home_description'] ?? []);
+        $this->saveSingleRelatedRecord($case, 'caseNeed', $validated['case_need'] ?? []);
+    }
+
+    private function validatedRelatedAttributes(Request $request): array
+    {
+        return $request->validate([
+            'family_members' => ['nullable', 'array'],
+            'family_members.*.name' => ['nullable', 'string', 'max:255'],
+            'family_members.*.relation' => ['nullable', 'string', 'max:255'],
+            'family_members.*.age' => ['nullable', 'integer', 'min:0', 'max:150'],
+            'family_members.*.education' => ['nullable', 'string', 'max:255'],
+            'family_members.*.health_status' => ['nullable', 'string', 'max:255'],
+            'family_members.*.marital_status' => ['nullable', 'string', 'max:255'],
+            'family_members.*.average_income' => ['nullable', 'string', 'max:255'],
+            'family_members.*.job' => ['nullable', 'string', 'max:255'],
+
+            'case_income' => ['nullable', 'array'],
+            'case_income.job_income' => ['nullable', 'numeric', 'min:0'],
+            'case_income.pension_income' => ['nullable', 'numeric', 'min:0'],
+            'case_income.charity_income' => ['nullable', 'numeric', 'min:0'],
+            'case_income.other_income' => ['nullable', 'numeric', 'min:0'],
+
+            'case_expense' => ['nullable', 'array'],
+            'case_expense.home_rent' => ['nullable', 'numeric', 'min:0'],
+            'case_expense.school_expenses' => ['nullable', 'numeric', 'min:0'],
+            'case_expense.utilities' => ['nullable', 'numeric', 'min:0'],
+            'case_expense.medicine' => ['nullable', 'numeric', 'min:0'],
+            'case_expense.nutrition' => ['nullable', 'numeric', 'min:0'],
+            'case_expense.other_expenses' => ['nullable', 'numeric', 'min:0'],
+
+            'case_home_description' => ['nullable', 'array'],
+            'case_home_description.rooms_count' => ['nullable', 'integer', 'min:0'],
+            'case_home_description.clean_water' => ['nullable', 'boolean'],
+            'case_home_description.roof_condition' => ['nullable', 'string', 'max:255'],
+            'case_home_description.flooring_type' => ['nullable', 'string', 'max:255'],
+            'case_home_description.has_tv' => ['nullable', 'boolean'],
+            'case_home_description.has_washing_machine' => ['nullable', 'boolean'],
+            'case_home_description.has_gas_stove' => ['nullable', 'boolean'],
+            'case_home_description.has_fan' => ['nullable', 'boolean'],
+            'case_home_description.has_phone' => ['nullable', 'boolean'],
+            'case_home_description.has_fridge' => ['nullable', 'boolean'],
+
+            'case_need' => ['nullable', 'array'],
+            'case_need.requested_needs' => ['nullable', 'string'],
+            'case_need.recommended_needs' => ['nullable', 'string'],
+        ]);
+    }
+
+    private function saveFamilyMembers(array $members, HumanitarianCase $case): void
+    {
+        $case->familyMembers()->delete();
+
+        foreach ($members as $member) {
+            if (! $this->hasValues($member)) {
+                continue;
+            }
+
+            $case->familyMembers()->create([
+                'name' => $member['name'] ?? null,
+                'relation' => $member['relation'] ?? null,
+                'age' => $member['age'] ?? null,
+                'education' => $member['education'] ?? null,
+                'health_status' => $member['health_status'] ?? null,
+                'marital_status' => $member['marital_status'] ?? null,
+                'average_income' => $member['average_income'] ?? null,
+                'job' => $member['job'] ?? null,
+            ]);
+        }
+    }
+
+    private function saveSingleRelatedRecord(HumanitarianCase $case, string $relation, array $data): void
+    {
+        if (! $this->hasValues($data)) {
+            $case->$relation()->delete();
+            return;
+        }
+
+        $case->$relation()->updateOrCreate(
+            ['humanitarian_case_id' => $case->id],
+            $data
+        );
+    }
+
+    private function computeDecimalTotal(array $values): ?string
+    {
+        $total = 0;
+        $hasValue = false;
+
+        foreach ($values as $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $hasValue = true;
+            $total += (float) $value;
+        }
+
+        return $hasValue ? number_format($total, 2, '.', '') : null;
+    }
+
+    private function hasValues(array $data): bool
+    {
+        foreach ($data as $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

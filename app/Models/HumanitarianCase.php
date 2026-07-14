@@ -5,10 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Campaign;
+use App\Models\CaseExpense;
+use App\Models\CaseHomeDescription;
+use App\Models\CaseIncome;
+use App\Models\CaseNeed;
 use App\Models\District;
+use App\Models\FamilyMember;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
 class HumanitarianCase extends Model
@@ -49,6 +55,31 @@ class HumanitarianCase extends Model
     {
         return $this->belongsToMany(Campaign::class, 'campaign_operations')
             ->withTimestamps();
+    }
+
+    public function familyMembers(): HasMany
+    {
+        return $this->hasMany(FamilyMember::class);
+    }
+
+    public function caseIncome(): HasOne
+    {
+        return $this->hasOne(CaseIncome::class);
+    }
+
+    public function caseExpense(): HasOne
+    {
+        return $this->hasOne(CaseExpense::class);
+    }
+
+    public function caseHomeDescription(): HasOne
+    {
+        return $this->hasOne(CaseHomeDescription::class);
+    }
+
+    public function caseNeed(): HasOne
+    {
+        return $this->hasOne(CaseNeed::class);
     }
 
     public function typeLabel(): string
