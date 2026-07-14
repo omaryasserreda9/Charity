@@ -481,14 +481,10 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
         const familyMembersBody = document.getElementById('familyMembersTableBody');
         const addButton = document.getElementById('addFamilyMember');
         const template = document.getElementById('familyMemberRowTemplate');
-        const referrers = @json($referrers->map(fn($referrer) => [
-            'id' => $referrer->id,
-            'name' => $referrer->name,
-            'district_id' => $referrer->district_id,
-        ]));
+        const referrers = @json($referrersJson);
         const districtSelect = document.getElementById('district_id');
         const referrerSelect = document.getElementById('referrer_id');
-        const initialReferrer = @json(old('referrer_id', isset($humanitarianCase) ? $humanitarianCase->referrer_id : ''));
+        const initialReferrer = @json(old('referrer_id', isset($humanitarianCase) ? $humanitarianCase -> referrer_id : ''));
 
         function updateReferrerOptions() {
             if (!districtSelect || !referrerSelect) return;

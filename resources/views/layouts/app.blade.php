@@ -27,7 +27,7 @@
         ['label' => 'المناطق', 'icon' => 'fa-map-location-dot', 'route' => 'districts.index', 'active' => request()->routeIs('districts.*')],
         ['label' => 'تصنيفات الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*')],
         ['label' => 'الحملات', 'icon' => 'fa-bullhorn', 'route' => 'campaigns.index', 'active' => request()->routeIs('campaigns.*')],
-        ['label' => 'التقارير', 'icon' => 'fa-file-invoice', 'route' => null, 'active' => false],
+        ['label' => 'الدلائل', 'icon' => 'fa-address-book', 'route' => 'case-referrers.index', 'active' => request()->routeIs('case-referrers.*')],
     ];
 @endphp
 

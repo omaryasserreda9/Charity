@@ -18,7 +18,7 @@ class HumanitarianCaseController extends Controller
         $filters = $request->only(['search', 'type', 'district_id', 'referrer_id']);
         $districts = District::orderBy('title')->get();
         $referrers = CaseReferrer::query()
-            ->when($filters['district_id'] ?? null, fn ($query, $districtId) => $query->where('district_id', $districtId))
+            ->when($filters['district_id'] ?? null, fn($query, $districtId) => $query->where('district_id', $districtId))
             ->orderBy('name')
             ->get();
 
@@ -30,13 +30,13 @@ class HumanitarianCaseController extends Controller
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('phone', 'like', "%{$search}%")
                         ->orWhere('national_id', 'like', "%{$search}%")
-                        ->orWhereHas('district', fn ($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"))
-                        ->orWhereHas('referrer', fn ($referrerQuery) => $referrerQuery->where('name', 'like', "%{$search}%"));
+                        ->orWhereHas('district', fn($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"))
+                        ->orWhereHas('referrer', fn($referrerQuery) => $referrerQuery->where('name', 'like', "%{$search}%"));
                 });
             })
-            ->when($filters['type'] ?? null, fn ($query, string $type) => $query->where('type', $type))
-            ->when($filters['district_id'] ?? null, fn ($query, $districtId) => $query->where('district_id', $districtId))
-            ->when($filters['referrer_id'] ?? null, fn ($query, $referrerId) => $query->where('referrer_id', $referrerId))
+            ->when($filters['type'] ?? null, fn($query, string $type) => $query->where('type', $type))
+            ->when($filters['district_id'] ?? null, fn($query, $districtId) => $query->where('district_id', $districtId))
+            ->when($filters['referrer_id'] ?? null, fn($query, $referrerId) => $query->where('referrer_id', $referrerId))
             ->latest()
             ->get();
 
@@ -49,12 +49,26 @@ class HumanitarianCaseController extends Controller
     {
         $districts = District::orderBy('title')->get();
         $referrers = CaseReferrer::orderBy('name')->get();
+
+        $referrersJson = $referrers->map(function ($referrer) {
+            return [
+                'id' => $referrer->id,
+                'name' => $referrer->name,
+                'district_id' => $referrer->district_id,
+            ];
+        })->values()->toArray();
+
         $breadcrumbs = [
             'الحالات الإنسانية' => route('humanitarian-cases.index'),
             'إضافة حالة' => route('humanitarian-cases.create'),
         ];
 
-        return view('humanitarian-cases.create', compact('districts', 'referrers', 'breadcrumbs'));
+        return view('humanitarian-cases.create', compact(
+            'districts',
+            'referrers',
+            'referrersJson',
+            'breadcrumbs'
+        ));
     }
 
     public function store(Request $request): RedirectResponse
@@ -80,16 +94,39 @@ class HumanitarianCaseController extends Controller
 
     public function edit(HumanitarianCase $humanitarianCase): View
     {
-        $humanitarianCase->load(['files', 'familyMembers', 'caseIncome', 'caseExpense', 'caseHomeDescription', 'caseNeed', 'referrer']);
+        $humanitarianCase->load([
+            'files',
+            'familyMembers',
+            'caseIncome',
+            'caseExpense',
+            'caseHomeDescription',
+            'caseNeed',
+            'referrer',
+        ]);
+
         $districts = District::orderBy('title')->get();
         $referrers = CaseReferrer::orderBy('name')->get();
+
+        $referrersJson = $referrers->map(function ($referrer) {
+            return [
+                'id' => $referrer->id,
+                'name' => $referrer->name,
+                'district_id' => $referrer->district_id,
+            ];
+        })->values()->toArray();
 
         $breadcrumbs = [
             'الحالات الإنسانية' => route('humanitarian-cases.index'),
             'تعديل الحالة' => route('humanitarian-cases.edit', $humanitarianCase),
         ];
 
-        return view('humanitarian-cases.edit', compact('humanitarianCase', 'districts', 'referrers', 'breadcrumbs'));
+        return view('humanitarian-cases.edit', compact(
+            'humanitarianCase',
+            'districts',
+            'referrers',
+            'referrersJson',
+            'breadcrumbs'
+        ));
     }
 
     public function update(Request $request, HumanitarianCase $humanitarianCase): RedirectResponse
