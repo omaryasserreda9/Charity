@@ -76,46 +76,128 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
             <div class="accordion-body">
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle">
-                        <thead>
-                            <tr>
-                                <th>الاسم</th>
-                                <th>العلاقة</th>
-                                <th>العمر</th>
-                                <th>التعليم</th>
-                                <th>الحالة الصحية</th>
-                                <th>الحالة الاجتماعية</th>
-                                <th>متوسط الدخل</th>
-                                <th>الوظيفة</th>
-                                <th></th>
-                            </tr>
-                        </thead>
                         <tbody id="familyMembersTableBody">
                             @if(count($familyMembers) > 0)
+
                             @foreach($familyMembers as $member)
+                            <!-- First Row -->
                             <tr>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][name]" value="{{ $member['name'] ?? '' }}" class="form-control"></td>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][relation]" value="{{ $member['relation'] ?? '' }}" class="form-control"></td>
-                                <td><input type="number" min="0" max="150" name="family_members[{{ $loop->index }}][age]" value="{{ $member['age'] ?? '' }}" class="form-control"></td>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][education]" value="{{ $member['education'] ?? '' }}" class="form-control"></td>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][health_status]" value="{{ $member['health_status'] ?? '' }}" class="form-control"></td>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][marital_status]" value="{{ $member['marital_status'] ?? '' }}" class="form-control"></td>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][average_income]" value="{{ $member['average_income'] ?? '' }}" class="form-control"></td>
-                                <td><input type="text" name="family_members[{{ $loop->index }}][job]" value="{{ $member['job'] ?? '' }}" class="form-control"></td>
-                                <td><button type="button" class="btn btn-sm btn-outline-danger remove-family-member">إزالة</button></td>
+                                <td>
+                                    <label class="form-label">الاسم</label>
+                                    <input type="text"
+                                        name="family_members[{{ $loop->index }}][name]"
+                                        value="{{ $member['name'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+
+                                <td>
+                                    <label class="form-label">العلاقة</label>
+                                    <input type="text"
+                                        name="family_members[{{ $loop->index }}][relation]"
+                                        value="{{ $member['relation'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+
+                                <td>
+                                    <label class="form-label">العمر</label>
+                                    <input type="number"
+                                        min="0"
+                                        max="150"
+                                        name="family_members[{{ $loop->index }}][age]"
+                                        value="{{ $member['age'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+
+                                <td>
+                                    <label class="form-label">التعليم</label>
+                                    <input type="text"
+                                        name="family_members[{{ $loop->index }}][education]"
+                                        value="{{ $member['education'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+                            </tr>
+
+                            <!-- Second Row -->
+                            <tr>
+                                <td>
+                                    <label class="form-label">الحالة الصحية</label>
+                                    <input type="text"
+                                        name="family_members[{{ $loop->index }}][health_status]"
+                                        value="{{ $member['health_status'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+
+                                <td>
+                                    <label class="form-label">الحالة الاجتماعية</label>
+                                    <input type="text"
+                                        name="family_members[{{ $loop->index }}][marital_status]"
+                                        value="{{ $member['marital_status'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+
+                                <td>
+                                    <label class="form-label">متوسط الدخل</label>
+                                    <input type="text"
+                                        name="family_members[{{ $loop->index }}][average_income]"
+                                        value="{{ $member['average_income'] ?? '' }}"
+                                        class="form-control">
+                                </td>
+
+                                <td>
+                                    <label class="form-label">الوظيفة</label>
+                                    <div class="d-flex gap-2">
+                                        <input type="text"
+                                            name="family_members[{{ $loop->index }}][job]"
+                                            value="{{ $member['job'] ?? '' }}"
+                                            class="form-control">
+
+                                        <button type="button"
+                                            class="btn btn-outline-danger remove-family-member">
+                                            إزالة
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="family-separator">
+                                <td colspan="4">
+                                    <hr class="my-4">
+                                </td>
                             </tr>
                             @endforeach
+
                             @else
+
+                            <!-- First Row -->
                             <tr>
-                                <td><input type="text" name="family_members[0][name]" class="form-control"></td>
-                                <td><input type="text" name="family_members[0][relation]" class="form-control"></td>
-                                <td><input type="number" min="0" max="150" name="family_members[0][age]" class="form-control"></td>
-                                <td><input type="text" name="family_members[0][education]" class="form-control"></td>
-                                <td><input type="text" name="family_members[0][health_status]" class="form-control"></td>
-                                <td><input type="text" name="family_members[0][marital_status]" class="form-control"></td>
-                                <td><input type="text" name="family_members[0][average_income]" class="form-control"></td>
-                                <td><input type="text" name="family_members[0][job]" class="form-control"></td>
-                                <td><button type="button" class="btn btn-sm btn-outline-danger remove-family-member">إزالة</button></td>
+                                <td><label>الاسم</label><input type="text" name="family_members[0][name]" class="form-control"></td>
+                                <td><label>العلاقة</label><input type="text" name="family_members[0][relation]" class="form-control"></td>
+                                <td><label>العمر</label><input type="number" min="0" max="150" name="family_members[0][age]" class="form-control"></td>
+                                <td><label>التعليم</label><input type="text" name="family_members[0][education]" class="form-control"></td>
                             </tr>
+
+                            <!-- Second Row -->
+                            <tr>
+                                <td><label>الحالة الصحية</label><input type="text" name="family_members[0][health_status]" class="form-control"></td>
+                                <td><label>الحالة الاجتماعية</label><input type="text" name="family_members[0][marital_status]" class="form-control"></td>
+                                <td><label>متوسط الدخل</label><input type="text" name="family_members[0][average_income]" class="form-control"></td>
+                                <td>
+                                    <label>الوظيفة</label>
+                                    <div class="d-flex gap-2">
+                                        <input type="text" name="family_members[0][job]" class="form-control">
+                                        <button type="button" class="btn btn-outline-danger remove-family-member">
+                                            إزالة
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="family-separator">
+                                <td colspan="4">
+                                    <hr class="my-4">
+                                </td>
+                            </tr>
+
                             @endif
                         </tbody>
                     </table>
@@ -292,59 +374,84 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
 </div>
 
 <template id="familyMemberRowTemplate">
-    <div class="card mb-3 family-member-card">
-        <div class="card-body">
-            <div class="row g-3">
 
-                <div class="col-md-3">
-                    <label class="form-label">الاسم</label>
-                    <input type="text" name="family_members[__INDEX__][name]" class="form-control">
-                </div>
+    <!-- First Row -->
+    <tr>
+        <td>
+            <label class="form-label">الاسم</label>
+            <input type="text"
+                name="family_members[__INDEX__][name]"
+                class="form-control">
+        </td>
 
-                <div class="col-md-3">
-                    <label class="form-label">العلاقة</label>
-                    <input type="text" name="family_members[__INDEX__][relation]" class="form-control">
-                </div>
+        <td>
+            <label class="form-label">العلاقة</label>
+            <input type="text"
+                name="family_members[__INDEX__][relation]"
+                class="form-control">
+        </td>
 
-                <div class="col-md-3">
-                    <label class="form-label">العمر</label>
-                    <input type="number" min="0" max="150" name="family_members[__INDEX__][age]" class="form-control">
-                </div>
+        <td>
+            <label class="form-label">العمر</label>
+            <input type="number"
+                min="0"
+                max="150"
+                name="family_members[__INDEX__][age]"
+                class="form-control">
+        </td>
 
-                <div class="col-md-3">
-                    <label class="form-label">التعليم</label>
-                    <input type="text" name="family_members[__INDEX__][education]" class="form-control">
-                </div>
+        <td>
+            <label class="form-label">التعليم</label>
+            <input type="text"
+                name="family_members[__INDEX__][education]"
+                class="form-control">
+        </td>
+    </tr>
 
-                <div class="col-md-3">
-                    <label class="form-label">الحالة الصحية</label>
-                    <input type="text" name="family_members[__INDEX__][health_status]" class="form-control">
-                </div>
+    <!-- Second Row -->
+    <tr>
+        <td>
+            <label class="form-label">الحالة الصحية</label>
+            <input type="text"
+                name="family_members[__INDEX__][health_status]"
+                class="form-control">
+        </td>
 
-                <div class="col-md-3">
-                    <label class="form-label">الحالة الاجتماعية</label>
-                    <input type="text" name="family_members[__INDEX__][marital_status]" class="form-control">
-                </div>
+        <td>
+            <label class="form-label">الحالة الاجتماعية</label>
+            <input type="text"
+                name="family_members[__INDEX__][marital_status]"
+                class="form-control">
+        </td>
 
-                <div class="col-md-3">
-                    <label class="form-label">متوسط الدخل</label>
-                    <input type="text" name="family_members[__INDEX__][average_income]" class="form-control">
-                </div>
+        <td>
+            <label class="form-label">متوسط الدخل</label>
+            <input type="text"
+                name="family_members[__INDEX__][average_income]"
+                class="form-control">
+        </td>
 
-                <div class="col-md-3">
-                    <label class="form-label">الوظيفة</label>
-                    <input type="text" name="family_members[__INDEX__][job]" class="form-control">
-                </div>
+        <td>
+            <label class="form-label">الوظيفة</label>
 
-                <div class="col-12 text-end">
-                    <button type="button" class="btn btn-outline-danger remove-family-member">
-                        إزالة
-                    </button>
-                </div>
+            <div class="d-flex gap-2">
+                <input type="text"
+                    name="family_members[__INDEX__][job]"
+                    class="form-control">
 
+                <button type="button"
+                    class="btn btn-outline-danger remove-family-member">
+                    إزالة
+                </button>
             </div>
-        </div>
-    </div>
+        </td>
+    </tr>
+
+    <tr class="family-separator">
+        <td colspan="4">
+            <hr class="my-4">
+        </td>
+    </tr>
 </template>
 
 <div class="d-flex gap-2 mt-4">
@@ -355,30 +462,43 @@ $caseNeed = old('case_need', isset($humanitarianCase) ? optional($humanitarianCa
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const familyMembersBody = document.querySelector('#familyMembersTableBody');
-        const addFamilyMemberButton = document.getElementById('addFamilyMember');
+
+        const familyMembersBody = document.getElementById('familyMembersTableBody');
+        const addButton = document.getElementById('addFamilyMember');
         const template = document.getElementById('familyMemberRowTemplate');
 
-        if (!familyMembersBody || !addFamilyMemberButton || !template) {
-            return;
-        }
+        if (!familyMembersBody || !addButton || !template) return;
 
-        addFamilyMemberButton.addEventListener('click', function() {
-            const clone = template.content.cloneNode(true);
-            familyMembersBody.appendChild(clone);
+        // Count existing members (2 rows per member)
+        let index = familyMembersBody.querySelectorAll('tr.family-separator').length;
+        addButton.addEventListener('click', function() {
+
+            let html = template.innerHTML.replace(/__INDEX__/g, index);
+
+            familyMembersBody.insertAdjacentHTML('beforeend', html);
+
+            index++;
         });
 
-        familyMembersBody.addEventListener('click', function(event) {
-            const removeButton = event.target.closest('.remove-family-member');
-            if (!removeButton) {
-                return;
-            }
+        familyMembersBody.addEventListener('click', function(e) {
 
-            const row = removeButton.closest('tr');
-            if (row) {
-                row.remove();
+            const btn = e.target.closest('.remove-family-member');
+            if (!btn) return;
+
+            const secondRow = btn.closest('tr');
+            if (!secondRow) return;
+
+            const firstRow = secondRow.previousElementSibling;
+            const separatorRow = secondRow.nextElementSibling;
+
+            if (firstRow) firstRow.remove();
+            secondRow.remove();
+
+            if (separatorRow && separatorRow.classList.contains('family-separator')) {
+                separatorRow.remove();
             }
         });
+
     });
 </script>
 @endpush
