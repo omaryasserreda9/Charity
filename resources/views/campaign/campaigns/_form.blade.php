@@ -33,6 +33,23 @@
         @error('campaign_category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
+    @php
+        $selectedReferrerIds = old('case_referrer_ids', isset($campaign) ? $campaign->caseReferrers->pluck('id')->map(fn($id) => (string) $id)->all() : []);
+    @endphp
+
+    <div class="col-12 col-md-6">
+        <label class="form-label" for="case_referrer_ids">الدلائل المرتبطة</label>
+        <select id="case_referrer_ids" name="case_referrer_ids[]" class="form-select @error('case_referrer_ids') is-invalid @enderror" multiple size="6">
+            @foreach($caseReferrers as $caseReferrer)
+                <option value="{{ $caseReferrer->id }}"
+                    {{ in_array((string) $caseReferrer->id, $selectedReferrerIds, true) ? 'selected' : '' }}>
+                    {{ $caseReferrer->name }} @if($caseReferrer->district) ({{ $caseReferrer->district->title }})@endif
+                </option>
+            @endforeach
+        </select>
+        @error('case_referrer_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
     <div class="col-12 col-md-6">
         <label class="form-label" for="status">الحالة</label>
         <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required>

@@ -45,24 +45,26 @@ class CampaignController extends Controller
     {
         $categories = CampaignCategory::orderBy('title')->get();
         $districts = District::orderBy('title')->get();
+        $caseReferrers = CaseReferrer::orderBy('name')->get();
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
             'إضافة حملة' => route('campaigns.create'),
         ];
 
-        return view('campaign.campaigns.create', compact('categories', 'districts', 'breadcrumbs'));
+        return view('campaign.campaigns.create', compact('categories', 'districts', 'caseReferrers', 'breadcrumbs'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        Campaign::create($this->validatedAttributes($request));
+        $campaign = Campaign::create($this->validatedAttributes($request));
+        $campaign->caseReferrers()->sync($this->validatedReferrerIds($request));
 
         return redirect()->route('campaigns.index')->with('success', 'تم إنشاء الحملة بنجاح.');
     }
 
     public function show(Campaign $campaign): View
     {
-        $campaign->load(['category', 'district', 'humanitarianCases']);
+        $campaign->load(['category', 'district', 'humanitarianCases', 'caseReferrers']);
 
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
@@ -76,17 +78,19 @@ class CampaignController extends Controller
     {
         $categories = CampaignCategory::orderBy('title')->get();
         $districts = District::orderBy('title')->get();
+        $caseReferrers = CaseReferrer::orderBy('name')->get();
         $breadcrumbs = [
             'الحملات' => route('campaigns.index'),
             'تعديل الحملة' => route('campaigns.edit', $campaign),
         ];
 
-        return view('campaign.campaigns.edit', compact('campaign', 'categories', 'districts', 'breadcrumbs'));
+        return view('campaign.campaigns.edit', compact('campaign', 'categories', 'districts', 'caseReferrers', 'breadcrumbs'));
     }
 
     public function update(Request $request, Campaign $campaign): RedirectResponse
     {
         $campaign->update($this->validatedAttributes($request));
+        $campaign->caseReferrers()->sync($this->validatedReferrerIds($request));
 
         return redirect()->route('campaigns.index')->with('success', 'تم تحديث الحملة بنجاح.');
     }
@@ -219,5 +223,15 @@ class CampaignController extends Controller
             'status' => ['required', Rule::in(['pending', 'done'])],
             'campaign_date' => ['required', 'date'],
         ]);
+    }
+
+    private function validatedReferrerIds(Request $request): array
+    {
+        $validated = $request->validate([
+            'case_referrer_ids' => ['nullable', 'array'],
+            'case_referrer_ids.*' => ['integer', 'exists:case_referrers,id'],
+        ]);
+
+        return $validated['case_referrer_ids'] ?? [];
     }
 }

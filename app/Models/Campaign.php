@@ -45,6 +45,12 @@ class Campaign extends Model
             ->withTimestamps();
     }
 
+    public function caseReferrers(): BelongsToMany
+    {
+        return $this->belongsToMany(CaseReferrer::class, 'campaign_case_referrer')
+            ->withTimestamps();
+    }
+
     public function statusLabel(): string
     {
         switch ($this->status) {
