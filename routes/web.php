@@ -55,6 +55,8 @@ Route::middleware('auth')->group(function (): void {
         ->name('humanitarian-case-files.preview');
     Route::get('humanitarian-case-files/{humanitarianCaseFile}/download', [HumanitarianCaseFileController::class, 'download'])
         ->name('humanitarian-case-files.download');
+    Route::get('campaigns/{campaign}/export-cases', [App\Http\Controllers\CampaignController::class, 'exportCases'])
+        ->name('campaigns.cases.export');
     Route::delete('humanitarian-case-files/{humanitarianCaseFile}', [HumanitarianCaseFileController::class, 'destroy'])
         ->name('humanitarian-case-files.destroy');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

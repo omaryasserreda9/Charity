@@ -169,6 +169,47 @@ class CampaignController extends Controller
             ->with('success', 'تم تحديث حالة الحملة إلى منجزة.');
     }
 
+    public function exportCases(Request $request, Campaign $campaign)
+    {
+        $filters = $request->only([
+            'search',
+            'district_id',
+            'referrer_id',
+            'type',
+        ]);
+
+        $campaign->load('category');
+
+        $humanitarianCases = HumanitarianCase::query()
+            ->with(['district', 'referrer'])
+            ->withCount('familyMembers')
+            ->when($filters['search'] ?? null, function ($query, string $search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('national_id', 'like', "%{$search}%")
+                        ->orWhereHas('district', fn($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
+                });
+            })
+            ->when($filters['district_id'] ?? null, fn($query, $districtId) => $query->where('district_id', $districtId))
+            ->when($filters['referrer_id'] ?? null, fn($query, $referrerId) => $query->where('referrer_id', $referrerId))
+            ->when($filters['type'] ?? null, fn($query, $type) => $query->where('type', $type))
+            ->orderBy('name')
+            ->get();
+
+        $view = view('campaign.campaigns.export', compact('campaign', 'humanitarianCases', 'filters'))->render();
+
+        $filename = sprintf('campaign_%s_cases_%s.xls', $campaign->id, now()->format('Ymd_His'));
+
+        // Excel-friendly HTML with UTF-8 BOM for Arabic
+        $content = "\xEF\xBB\xBF" . $view;
+
+        return response($content, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     private function validatedAttributes(Request $request): array
     {
         return $request->validate([

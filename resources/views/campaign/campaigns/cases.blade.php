@@ -10,7 +10,10 @@
             <h2>{{ $campaign->title }}</h2>
             <p>اختر الحالات الإنسانية المرتبطة بهذه الحملة.</p>
         </div>
-        <a href="{{ route('campaigns.show', $campaign) }}" class="btn btn-light btn-sm">عودة للحملة</a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('campaigns.show', $campaign) }}" class="btn btn-light btn-sm">عودة للحملة</a>
+            <a href="{{ route('campaigns.cases.export', $campaign) }}?{{ http_build_query($filters) }}" class="btn btn-outline-secondary btn-sm">تنزيل Excel</a>
+        </div>
     </div>
 
     <form method="GET" action="{{ route('campaigns.cases', $campaign) }}" class="filter-bar mb-3">
