@@ -34,20 +34,50 @@
     </div>
 
     @php
-        $selectedReferrerIds = old('case_referrer_ids', isset($campaign) ? $campaign->caseReferrers->pluck('id')->map(fn($id) => (string) $id)->all() : []);
+    $selectedReferrerIds = old(
+    'case_referrer_ids',
+    isset($campaign)
+    ? $campaign->caseReferrers->pluck('id')->map(function ($id) {
+    return (string) $id;
+    })->all()
+    : []
+    );
     @endphp
 
-    <div class="col-12 col-md-6">
-        <label class="form-label" for="case_referrer_ids">الدلائل المرتبطة</label>
-        <select id="case_referrer_ids" name="case_referrer_ids[]" class="form-select @error('case_referrer_ids') is-invalid @enderror" multiple size="6">
-            @foreach($caseReferrers as $caseReferrer)
-                <option value="{{ $caseReferrer->id }}"
-                    {{ in_array((string) $caseReferrer->id, $selectedReferrerIds, true) ? 'selected' : '' }}>
-                    {{ $caseReferrer->name }} @if($caseReferrer->district) ({{ $caseReferrer->district->title }})@endif
-                </option>
-            @endforeach
-        </select>
-        @error('case_referrer_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    <div class="col-12">
+        <label class="form-label">الدلائل المرتبطة</label>
+
+        <div class="border rounded p-3" style="max-height: 250px; overflow-y: auto;">
+            @forelse($caseReferrers as $caseReferrer)
+            <div class="form-check mb-2">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="referrer{{ $caseReferrer->id }}"
+                    name="case_referrer_ids[]"
+                    value="{{ $caseReferrer->id }}"
+                    {{ in_array((string) $caseReferrer->id, $selectedReferrerIds, true) ? 'checked' : '' }}>
+
+                <label class="form-check-label" for="referrer{{ $caseReferrer->id }}">
+                    <strong>{{ $caseReferrer->name }}</strong>
+
+                    @if($caseReferrer->district)
+                    <span class="text-muted">
+                        ({{ $caseReferrer->district->title }})
+                    </span>
+                    @endif
+                </label>
+            </div>
+            @empty
+            <p class="text-muted mb-0">لا توجد دلائل.</p>
+            @endforelse
+        </div>
+
+        @error('case_referrer_ids')
+        <div class="invalid-feedback d-block">
+            {{ $message }}
+        </div>
+        @enderror
     </div>
 
     <div class="col-12 col-md-6">
