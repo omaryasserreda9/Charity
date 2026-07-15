@@ -19,13 +19,10 @@ class InventoryOperation extends Model
         'operation_date',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'quantity' => 'decimal:2',
-            'operation_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'quantity' => 'decimal:2',
+        'operation_date' => 'date',
+    ];
 
     public function category(): BelongsTo
     {

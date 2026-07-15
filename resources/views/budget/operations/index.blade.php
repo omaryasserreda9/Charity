@@ -66,7 +66,7 @@
                             {{ $operation->type === 'in' ? 'وارد' : 'صادر' }}
                         </span>
                     </td>
-                    <td>{{ optional($operation->budget_category)->title ?? 'بدون تصنيف' }}</td>
+                    <td>{{ optional($operation->category)->title ?? 'بدون تصنيف' }}</td>
                     <td>{{ $operation->donor_name }}</td>
                     <td>{{ number_format((float) $operation->quantity, 2) }}</td>
                     <td>{{ optional($operation->operation_date)->format('Y-m-d') }}</td>

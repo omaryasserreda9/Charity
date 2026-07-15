@@ -20,12 +20,9 @@ class Campaign extends Model
         'campaign_date',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'campaign_date' => 'date',
-        ];
-    }
+    protected $casts = [
+        'campaign_date' => 'date',
+    ];
 
     public function district(): BelongsTo
     {

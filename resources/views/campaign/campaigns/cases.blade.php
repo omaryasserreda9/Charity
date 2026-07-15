@@ -18,7 +18,27 @@
         <select name="district_id" class="form-select">
             <option value="">كل المناطق</option>
             @foreach($districts as $district)
-                <option value="{{ $district->id }}" {{ (string) ($filters['district_id'] ?? '') === (string) $district->id ? 'selected' : '' }}>{{ $district->title }}</option>
+            <option value="{{ $district->id }}" {{ (string) ($filters['district_id'] ?? '') === (string) $district->id ? 'selected' : '' }}>{{ $district->title }}</option>
+            @endforeach
+        </select>
+
+        <select name="referrer_id" class="form-select">
+            <option value="">كل الدلائل</option>
+            @foreach($referrers as $referrer)
+            <option value="{{ $referrer->id }}"
+                {{ (string) ($filters['referrer_id'] ?? '') === (string) $referrer->id ? 'selected' : '' }}>
+                {{ $referrer->name }}
+            </option>
+            @endforeach
+        </select>
+
+        <select name="type" class="form-select">
+            <option value="">كل الأنواع</option>
+            @foreach(\App\Models\HumanitarianCase::typeOptions() as $value => $label)
+            <option value="{{ $value }}"
+                {{ (string) ($filters['type'] ?? '') === (string) $value ? 'selected' : '' }}>
+                {{ $label }}
+            </option>
             @endforeach
         </select>
         <button type="submit" class="btn btn-primary">تصفية</button>
@@ -40,6 +60,7 @@
                         <th>رقم الجوال</th>
                         <th>رقم الهوية</th>
                         <th>المنطقة</th>
+                        <th>الدليل</th>
                         <th>النوع</th>
                     </tr>
                 </thead>
@@ -53,16 +74,17 @@
                                 name="humanitarian_case_ids[]"
                                 value="{{ $case->id }}"
                                 {{ in_array($case->id, old('humanitarian_case_ids', $selectedCaseIds), true) ? 'checked' : '' }}
-                        </td>
+                                </td>
                         <td>{{ $case->name }}</td>
                         <td>{{ $case->phone }}</td>
                         <td>{{ $case->national_id }}</td>
                         <td>{{ $case->district->title ?? $case->area ?: '—' }}</td>
+                        <td>{{ $case->referrer->name ?? '—' }}</td>
                         <td>{{ $case->typeLabel() }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">لا توجد حالات إنسانية مسجلة.</td>
+                        <td colspan="7" class="text-center text-muted py-4">لا توجد حالات إنسانية مسجلة.</td>
                     </tr>
                     @endforelse
                 </tbody>

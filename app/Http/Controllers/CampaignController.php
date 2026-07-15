@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use App\Models\CaseReferrer;
 
 class CampaignController extends Controller
 {
@@ -25,11 +26,11 @@ class CampaignController extends Controller
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('title', 'like', "%{$search}%")
-                        ->orWhereHas('district', fn ($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
+                        ->orWhereHas('district', fn($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
                 });
             })
-            ->when($filters['campaign_category_id'] ?? null, fn ($query, $categoryId) => $query->where('campaign_category_id', $categoryId))
-            ->when($filters['district_id'] ?? null, fn ($query, $districtId) => $query->where('district_id', $districtId))
+            ->when($filters['campaign_category_id'] ?? null, fn($query, $categoryId) => $query->where('campaign_category_id', $categoryId))
+            ->when($filters['district_id'] ?? null, fn($query, $districtId) => $query->where('district_id', $districtId))
             ->latest('campaign_date')
             ->latest()
             ->paginate(10)
@@ -99,22 +100,30 @@ class CampaignController extends Controller
 
     public function cases(Request $request, Campaign $campaign): View
     {
-        $filters = $request->only(['search', 'district_id']);
+        $filters = $request->only([
+            'search',
+            'district_id',
+            'referrer_id',
+            'type',
+        ]);
         $campaign->load('category');
         $selectedCaseIds = $campaign->humanitarianCases()->pluck('humanitarian_cases.id')->all();
         $districts = District::orderBy('title')->get();
+        $referrers = CaseReferrer::orderBy('name')->get();
 
         $humanitarianCases = HumanitarianCase::query()
-            ->with('district')
+            ->with(['district', 'referrer'])
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('phone', 'like', "%{$search}%")
                         ->orWhere('national_id', 'like', "%{$search}%")
-                        ->orWhereHas('district', fn ($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
+                        ->orWhereHas('district', fn($districtQuery) => $districtQuery->where('title', 'like', "%{$search}%"));
                 });
             })
-            ->when($filters['district_id'] ?? null, fn ($query, $districtId) => $query->where('district_id', $districtId))
+            ->when($filters['district_id'] ?? null, fn($query, $districtId) => $query->where('district_id', $districtId))
+            ->when($filters['referrer_id'] ?? null, fn($query, $referrerId) => $query->where('referrer_id', $referrerId))
+            ->when($filters['type'] ?? null, fn($query, $type) => $query->where('type', $type))
             ->orderBy('name')
             ->get();
 
@@ -124,7 +133,15 @@ class CampaignController extends Controller
             'الحالات المرتبطة' => route('campaigns.cases', $campaign),
         ];
 
-        return view('campaign.campaigns.cases', compact('campaign', 'humanitarianCases', 'selectedCaseIds', 'districts', 'filters', 'breadcrumbs'));
+        return view('campaign.campaigns.cases', compact(
+            'campaign',
+            'humanitarianCases',
+            'selectedCaseIds',
+            'districts',
+            'referrers',
+            'filters',
+            'breadcrumbs'
+        ));
     }
 
     public function syncCases(Request $request, Campaign $campaign): RedirectResponse
