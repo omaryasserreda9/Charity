@@ -51,6 +51,7 @@
                         <th>المنطقة</th>
                         <th>الدليل</th>
                         <th>النوع</th>
+                        <th>أفراد العائلة</th>
                         <th>المرفقات</th>
                         <th>الإجراءات</th>
                     </tr>
@@ -69,6 +70,7 @@
                                     {{ $case->typeLabel() }}
                                 </span>
                             </td>
+                            <td>{{ $case->family_members_count }}</td>
                             <td>{{ $case->files_count }}</td>
                             <td>
                                 <div class="table-actions">

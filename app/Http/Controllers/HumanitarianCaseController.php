@@ -23,7 +23,7 @@ class HumanitarianCaseController extends Controller
             ->get();
 
         $cases = HumanitarianCase::query()
-            ->withCount('files')
+            ->withCount(['files', 'familyMembers'])
             ->with(['district', 'referrer'])
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
