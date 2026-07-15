@@ -8,7 +8,7 @@
         <div class="panel-header">
             <div>
                 <h2>سجل الحملات</h2>
-                <p>بحث وتصفية حسب التصنيف.</p>
+                <p>بحث وتصفية حسب البند.</p>
             </div>
             <a href="{{ route('campaigns.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
@@ -27,7 +27,7 @@
                 @endforeach
             </select>
             <select name="campaign_category_id" class="form-select">
-                <option value="">كل التصنيفات</option>
+                <option value="">كل البنود</option>
                 @foreach($categories as $category)
                     <option value="{{ $category->id }}" {{ (string) ($filters['campaign_category_id'] ?? '') === (string) $category->id ? 'selected' : '' }}>
                         {{ $category->title }}
@@ -45,7 +45,7 @@
                         <th>#</th>
                         <th>العنوان</th>
                         <th>المنطقة</th>
-                        <th>التصنيف</th>
+                        <th>البند</th>
                         <th>الحالة</th>
                         <th>التاريخ</th>
                         <th>الحالات</th>

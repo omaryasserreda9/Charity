@@ -1,7 +1,7 @@
 @csrf
 
 <div class="mb-3">
-    <label class="form-label" for="title">عنوان التصنيف</label>
+    <label class="form-label" for="title">عنوان البند</label>
     <input id="title" type="text" name="title" value="{{ old('title', $campaignCategory->title ?? '') }}" class="form-control @error('title') is-invalid @enderror" required autofocus>
     @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>

@@ -20,7 +20,7 @@
     <div class="panel-header">
         <div>
             <h2>سجل العمليات</h2>
-            <p>بحث وتصفية حسب التصنيف والتاريخ.</p>
+            <p>بحث وتصفية حسب البند والتاريخ.</p>
         </div>
         <a href="{{ route('budget-operations.create') }}" class="btn btn-primary btn-sm">
             <i class="fa-solid fa-plus ms-1"></i>
@@ -29,9 +29,9 @@
     </div>
 
     <form method="GET" action="{{ route('budget-operations.index') }}" class="filter-bar mb-3">
-        <input type="search" name="search" value="{{ $filters['search'] ?? '' }}" class="form-control" placeholder="بحث باسم المتبرع أو التصنيف">
+        <input type="search" name="search" value="{{ $filters['search'] ?? '' }}" class="form-control" placeholder="بحث باسم المتبرع أو البند">
         <select name="budget_category_id" class="form-select">
-            <option value="">كل التصنيفات</option>
+            <option value="">كل البنود</option>
             @foreach($categories as $category)
             <option value="{{ $category->id }}" {{ (string) ($filters['budget_category_id'] ?? '') === (string) $category->id ? 'selected' : '' }}>
                 {{ $category->title }}
@@ -50,7 +50,7 @@
                 <tr>
                     <th>#</th>
                     <th>النوع</th>
-                    <th>التصنيف</th>
+                    <th>البند</th>
                     <th>اسم المتبرع / الجهة</th>
                     <th>القيمة</th>
                     <th>التاريخ</th>
@@ -66,7 +66,7 @@
                             {{ $operation->type === 'in' ? 'وارد' : 'صادر' }}
                         </span>
                     </td>
-                    <td>{{ optional($operation->category)->title ?? 'بدون تصنيف' }}</td>
+                    <td>{{ optional($operation->category)->title ?? 'بدون بند' }}</td>
                     <td>{{ $operation->donor_name }}</td>
                     <td>{{ number_format((float) $operation->quantity, 2) }}</td>
                     <td>{{ optional($operation->operation_date)->format('Y-m-d') }}</td>

@@ -20,7 +20,7 @@ class BudgetCategoryController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $breadcrumbs = ['تصنيفات الميزانية' => route('budget-categories.index')];
+        $breadcrumbs = ['بنود الميزانية' => route('budget-categories.index')];
 
         return view('budget.categories.index', compact('categories', 'search', 'breadcrumbs'));
     }
@@ -28,8 +28,8 @@ class BudgetCategoryController extends Controller
     public function create(): View
     {
         $breadcrumbs = [
-            'تصنيفات الميزانية' => route('budget-categories.index'),
-            'إضافة تصنيف' => route('budget-categories.create'),
+            'بنود الميزانية' => route('budget-categories.index'),
+            'إضافة بند' => route('budget-categories.create'),
         ];
 
         return view('budget.categories.create', compact('breadcrumbs'));
@@ -39,7 +39,7 @@ class BudgetCategoryController extends Controller
     {
         BudgetCategory::create($this->validatedAttributes($request));
 
-        return redirect()->route('budget-categories.index')->with('success', 'تم إنشاء التصنيف بنجاح.');
+        return redirect()->route('budget-categories.index')->with('success', 'تم إنشاء البند بنجاح.');
     }
 
     public function show(BudgetCategory $budgetCategory): View
@@ -47,7 +47,7 @@ class BudgetCategoryController extends Controller
         $budgetCategory->loadCount('operations');
 
         $breadcrumbs = [
-            'تصنيفات الميزانية' => route('budget-categories.index'),
+            'بنود الميزانية' => route('budget-categories.index'),
             $budgetCategory->title => route('budget-categories.show', $budgetCategory),
         ];
 
@@ -57,8 +57,8 @@ class BudgetCategoryController extends Controller
     public function edit(BudgetCategory $budgetCategory): View
     {
         $breadcrumbs = [
-            'تصنيفات الميزانية' => route('budget-categories.index'),
-            'تعديل التصنيف' => route('budget-categories.edit', $budgetCategory),
+            'بنود الميزانية' => route('budget-categories.index'),
+            'تعديل البند' => route('budget-categories.edit', $budgetCategory),
         ];
 
         return view('budget.categories.edit', compact('budgetCategory', 'breadcrumbs'));
@@ -68,14 +68,14 @@ class BudgetCategoryController extends Controller
     {
         $budgetCategory->update($this->validatedAttributes($request));
 
-        return redirect()->route('budget-categories.index')->with('success', 'تم تحديث التصنيف بنجاح.');
+        return redirect()->route('budget-categories.index')->with('success', 'تم تحديث البند بنجاح.');
     }
 
     public function destroy(BudgetCategory $budgetCategory): RedirectResponse
     {
         $budgetCategory->delete();
 
-        return redirect()->route('budget-categories.index')->with('success', 'تم حذف التصنيف، وبقيت العمليات المرتبطة بدون تصنيف.');
+        return redirect()->route('budget-categories.index')->with('success', 'تم حذف البند، وبقيت العمليات المرتبطة بدون بند.');
     }
 
     private function validatedAttributes(Request $request): array

@@ -19,13 +19,13 @@
 @php
     $navItems = [
         ['label' => 'لوحة التحكم', 'icon' => 'fa-chart-line', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
-        ['label' => 'تصنيفات الميزانية', 'icon' => 'fa-tags', 'route' => 'budget-categories.index', 'active' => request()->routeIs('budget-categories.*')],
+        ['label' => 'بنود الميزانية', 'icon' => 'fa-tags', 'route' => 'budget-categories.index', 'active' => request()->routeIs('budget-categories.*')],
         ['label' => 'عمليات الميزانية', 'icon' => 'fa-wallet', 'route' => 'budget-operations.index', 'active' => request()->routeIs('budget-operations.*')],
-        ['label' => 'تصنيفات المخزون', 'icon' => 'fa-boxes-stacked', 'route' => 'inventory-categories.index', 'active' => request()->routeIs('inventory-categories.*')],
+        ['label' => 'بنود المخزون', 'icon' => 'fa-boxes-stacked', 'route' => 'inventory-categories.index', 'active' => request()->routeIs('inventory-categories.*')],
         ['label' => 'عمليات المخزون', 'icon' => 'fa-warehouse', 'route' => 'inventory-operations.index', 'active' => request()->routeIs('inventory-operations.*')],
         ['label' => 'الحالات الإنسانية', 'icon' => 'fa-users', 'route' => 'humanitarian-cases.index', 'active' => request()->routeIs('humanitarian-cases.*') || request()->routeIs('humanitarian-case-files.*')],
         ['label' => 'المناطق', 'icon' => 'fa-map-location-dot', 'route' => 'districts.index', 'active' => request()->routeIs('districts.*')],
-        ['label' => 'تصنيفات الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*')],
+        ['label' => 'بنود الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*')],
         ['label' => 'الحملات', 'icon' => 'fa-bullhorn', 'route' => 'campaigns.index', 'active' => request()->routeIs('campaigns.*')],
         ['label' => 'الدلائل', 'icon' => 'fa-address-book', 'route' => 'case-referrers.index', 'active' => request()->routeIs('case-referrers.*')],
     ];

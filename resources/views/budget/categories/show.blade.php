@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'تفاصيل تصنيف')
-@section('page_title', 'تفاصيل تصنيف')
+@section('title', 'تفاصيل بند')
+@section('page_title', 'تفاصيل بند')
 
 @section('content')
     <section class="panel form-panel">

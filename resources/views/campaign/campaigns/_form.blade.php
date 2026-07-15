@@ -21,9 +21,9 @@
     </div>
 
     <div class="col-12 col-md-6">
-        <label class="form-label" for="campaign_category_id">التصنيف</label>
+        <label class="form-label" for="campaign_category_id">البند</label>
         <select id="campaign_category_id" name="campaign_category_id" class="form-select @error('campaign_category_id') is-invalid @enderror" required>
-            <option value="">اختر التصنيف</option>
+            <option value="">اختر البند</option>
             @foreach($categories as $category)
             <option value="{{ $category->id }}" {{ (string) old('campaign_category_id', $campaign->campaign_category_id ?? '') === (string) $category->id ? 'selected' : '' }}>
                 {{ $category->title }}

@@ -39,7 +39,7 @@
                     <thead>
                         <tr>
                             <th>المتبرع</th>
-                            <th>التصنيف</th>
+                            <th>البند</th>
                             <th>المبلغ</th>
                             <th>التاريخ</th>
                         </tr>
@@ -48,7 +48,7 @@
                         @foreach($recentDonations as $donation)
                         <tr>
                             <td>{{ $donation->donor_name }}</td>
-                            <td>{{ optional($donation->category)->title ?? 'بدون تصنيف' }}</td>
+                            <td>{{ optional($donation->category)->title ?? 'بدون بند' }}</td>
                             <td>{{ number_format((float) $donation->quantity, 2) }}</td>
                             <td>{{ optional($donation->operation_date)->format('Y-m-d') }}</td>
                         </tr>

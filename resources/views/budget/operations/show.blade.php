@@ -14,8 +14,8 @@
         </div>
 
         <dl class="details-list">
-            <dt>التصنيف</dt>
-            <dd>{{ optional($budgetOperation->budget_category)->title ?? 'بدون تصنيف' }}</dd>
+            <dt>البند</dt>
+            <dd>{{ optional($budgetOperation->budget_category)->title ?? 'بدون بند' }}</dd>
             <dt>اسم المتبرع / الجهة</dt>
             <dd>{{ $budgetOperation->donor_name }}</dd>
             <dt>القيمة</dt>

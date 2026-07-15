@@ -23,7 +23,7 @@
         <dl class="details-list">
             <dt>المنطقة</dt>
             <dd>{{ $campaign->district->title }}</dd>
-            <dt>التصنيف</dt>
+            <dt>البند</dt>
             <dd>{{ $campaign->category->title }}</dd>
             <dt>تاريخ الحملة</dt>
             <dd>{{ optional($campaign->campaign_date)->format('Y-m-d') }}</dd>

@@ -14,8 +14,8 @@
         </div>
 
         <dl class="details-list">
-            <dt>التصنيف</dt>
-            <dd>{{ optional($inventoryOperation->category)->title ?? 'بدون تصنيف' }}</dd>
+            <dt>البند</dt>
+            <dd>{{ optional($inventoryOperation->category)->title ?? 'بدون بند' }}</dd>
             <dt>اسم المتبرع / الجهة</dt>
             <dd>{{ $inventoryOperation->donor_name }}</dd>
             <dt>اسم الصنف</dt>

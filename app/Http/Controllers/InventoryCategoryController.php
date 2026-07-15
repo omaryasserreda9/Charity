@@ -20,7 +20,7 @@ class InventoryCategoryController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $breadcrumbs = ['تصنيفات المخزون' => route('inventory-categories.index')];
+        $breadcrumbs = ['بنود المخزون' => route('inventory-categories.index')];
 
         return view('inventory.categories.index', compact('categories', 'search', 'breadcrumbs'));
     }
@@ -28,8 +28,8 @@ class InventoryCategoryController extends Controller
     public function create(): View
     {
         $breadcrumbs = [
-            'تصنيفات المخزون' => route('inventory-categories.index'),
-            'إضافة تصنيف' => route('inventory-categories.create'),
+            'بنود المخزون' => route('inventory-categories.index'),
+            'إضافة بند' => route('inventory-categories.create'),
         ];
 
         return view('inventory.categories.create', compact('breadcrumbs'));
@@ -39,7 +39,7 @@ class InventoryCategoryController extends Controller
     {
         InventoryCategory::create($this->validatedAttributes($request));
 
-        return redirect()->route('inventory-categories.index')->with('success', 'تم إنشاء التصنيف بنجاح.');
+        return redirect()->route('inventory-categories.index')->with('success', 'تم إنشاء البند بنجاح.');
     }
 
     public function show(InventoryCategory $inventoryCategory): View
@@ -47,7 +47,7 @@ class InventoryCategoryController extends Controller
         $inventoryCategory->loadCount('operations');
 
         $breadcrumbs = [
-            'تصنيفات المخزون' => route('inventory-categories.index'),
+            'بنود المخزون' => route('inventory-categories.index'),
             $inventoryCategory->title => route('inventory-categories.show', $inventoryCategory),
         ];
 
@@ -57,8 +57,8 @@ class InventoryCategoryController extends Controller
     public function edit(InventoryCategory $inventoryCategory): View
     {
         $breadcrumbs = [
-            'تصنيفات المخزون' => route('inventory-categories.index'),
-            'تعديل التصنيف' => route('inventory-categories.edit', $inventoryCategory),
+            'بنود المخزون' => route('inventory-categories.index'),
+            'تعديل البند' => route('inventory-categories.edit', $inventoryCategory),
         ];
 
         return view('inventory.categories.edit', compact('inventoryCategory', 'breadcrumbs'));
@@ -68,14 +68,14 @@ class InventoryCategoryController extends Controller
     {
         $inventoryCategory->update($this->validatedAttributes($request));
 
-        return redirect()->route('inventory-categories.index')->with('success', 'تم تحديث التصنيف بنجاح.');
+        return redirect()->route('inventory-categories.index')->with('success', 'تم تحديث البند بنجاح.');
     }
 
     public function destroy(InventoryCategory $inventoryCategory): RedirectResponse
     {
         $inventoryCategory->delete();
 
-        return redirect()->route('inventory-categories.index')->with('success', 'تم حذف التصنيف، وبقيت العمليات المرتبطة بدون تصنيف.');
+        return redirect()->route('inventory-categories.index')->with('success', 'تم حذف البند، وبقيت العمليات المرتبطة بدون بند.');
     }
 
     private function validatedAttributes(Request $request): array

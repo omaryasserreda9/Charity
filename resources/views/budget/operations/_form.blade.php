@@ -20,9 +20,9 @@
     </div>
 
     <div class="col-12 col-md-6">
-        <label class="form-label" for="budget_category_id">التصنيف</label>
+        <label class="form-label" for="budget_category_id">البند</label>
         <select id="budget_category_id" name="budget_category_id" class="form-select @error('budget_category_id') is-invalid @enderror">
-            <option value="">بدون تصنيف</option>
+            <option value="">بدون بند</option>
             @foreach($categories as $category)
             <option value="{{ $category->id }}" {{ (string) old('budget_category_id', $budgetOperation->budget_category_id ?? '') === (string) $category->id ? 'selected' : '' }}>
                 {{ $category->title }}

@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'تعديل تصنيف')
-@section('page_title', 'تعديل تصنيف')
+@section('title', 'تعديل بند')
+@section('page_title', 'تعديل بند')
 
 @section('content')
     <section class="panel form-panel">
         <div class="panel-header">
             <div>
                 <h2>{{ $inventoryCategory->title }}</h2>
-                <p>تعديل بيانات التصنيف.</p>
+                <p>تعديل بيانات البند.</p>
             </div>
         </div>
 

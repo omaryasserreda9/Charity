@@ -1,23 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'تصنيفات الحملات')
-@section('page_title', 'تصنيفات الحملات')
+@section('title', 'بنود الحملات')
+@section('page_title', 'بنود الحملات')
 
 @section('content')
     <section class="panel">
         <div class="panel-header">
             <div>
-                <h2>التصنيفات</h2>
-                <p>إدارة تصنيفات الحملات.</p>
+                <h2>البنود</h2>
+                <p>إدارة بنود الحملات.</p>
             </div>
             <a href="{{ route('campaign-categories.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
-                إضافة تصنيف
+                إضافة بند
             </a>
         </div>
 
         <form method="GET" action="{{ route('campaign-categories.index') }}" class="filter-bar mb-3">
-            <input type="search" name="search" value="{{ $search }}" class="form-control" placeholder="بحث باسم التصنيف">
+            <input type="search" name="search" value="{{ $search }}" class="form-control" placeholder="بحث باسم البند">
             <button type="submit" class="btn btn-primary">بحث</button>
             <a href="{{ route('campaign-categories.index') }}" class="btn btn-light">إعادة ضبط</a>
         </form>
@@ -49,10 +49,10 @@
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">حذف التصنيف</h5>
+                                                <h5 class="modal-title">حذف البند</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                                             </div>
-                                            <div class="modal-body">لا يمكن حذف التصنيف إذا كانت هناك حملات مرتبطة به.</div>
+                                            <div class="modal-body">لا يمكن حذف البند إذا كانت هناك حملات مرتبطة به.</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
                                                 <form method="POST" action="{{ route('campaign-categories.destroy', $category) }}">
@@ -68,7 +68,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">لا توجد تصنيفات حتى الآن.</td>
+                            <td colspan="4" class="text-center text-muted py-4">لا توجد بنود حتى الآن.</td>
                         </tr>
                     @endforelse
                 </tbody>
