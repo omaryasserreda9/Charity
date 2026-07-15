@@ -113,6 +113,7 @@ class CampaignController extends Controller
 
         $humanitarianCases = HumanitarianCase::query()
             ->with(['district', 'referrer'])
+            ->withCount('familyMembers')
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('name', 'like', "%{$search}%")

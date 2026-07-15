@@ -70,7 +70,7 @@
                                     {{ $case->typeLabel() }}
                                 </span>
                             </td>
-                            <td>{{ $case->family_members_count }}</td>
+                            <td>{{ $case->family_members_count + 1 }}</td>
                             <td>{{ $case->files_count }}</td>
                             <td>
                                 <div class="table-actions">

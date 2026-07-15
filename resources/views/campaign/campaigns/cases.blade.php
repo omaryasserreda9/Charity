@@ -61,7 +61,9 @@
                         <th>رقم الهوية</th>
                         <th>المنطقة</th>
                         <th>الدليل</th>
+                        <th>عدد أفراد العائلة</th>
                         <th>النوع</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -80,11 +82,13 @@
                         <td>{{ $case->national_id }}</td>
                         <td>{{ $case->district->title ?? $case->area ?: '—' }}</td>
                         <td>{{ $case->referrer->name ?? '—' }}</td>
+                        <td>{{ $case->family_members_count + 1 }}</td>
+
                         <td>{{ $case->typeLabel() }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">لا توجد حالات إنسانية مسجلة.</td>
+                        <td colspan="8" class="text-center text-muted py-4">لا توجد حالات إنسانية مسجلة.</td>
                     </tr>
                     @endforelse
                 </tbody>
