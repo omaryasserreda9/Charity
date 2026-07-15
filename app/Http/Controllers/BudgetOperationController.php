@@ -108,6 +108,7 @@ class BudgetOperationController extends Controller
             'budget_category_id' => ['nullable', 'exists:budget_categories,id'],
             'type' => ['required', Rule::in(['in', 'out'])],
             'donor_name' => ['required', 'string', 'max:255'],
+            'receipt_number' => ['nullable', 'string', 'max:255', 'required_if:type,in'],
             'quantity' => ['required', 'numeric', 'min:0.01'],
             'operation_date' => ['required', 'date'],
         ]);

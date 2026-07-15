@@ -18,6 +18,10 @@
             <dd>{{ optional($budgetOperation->budget_category)->title ?? 'بدون بند' }}</dd>
             <dt>اسم المتبرع / الجهة</dt>
             <dd>{{ $budgetOperation->donor_name }}</dd>
+            @if($budgetOperation->type === 'in')
+                <dt>رقم الإيصال</dt>
+                <dd>{{ $budgetOperation->receipt_number ?? '—' }}</dd>
+            @endif
             <dt>القيمة</dt>
             <dd>{{ number_format((float) $budgetOperation->quantity, 2) }}</dd>
             <dt>تاريخ العملية</dt>

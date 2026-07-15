@@ -38,6 +38,12 @@
         @error('donor_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
+    <div class="col-12 col-md-6" id="receipt_number_group" style="display: {{ old('type', $budgetOperation->type ?? '') === 'in' ? 'block' : 'none' }};">
+        <label class="form-label" for="receipt_number">رقم الإيصال</label>
+        <input id="receipt_number" type="text" name="receipt_number" value="{{ old('receipt_number', $budgetOperation->receipt_number ?? '') }}" class="form-control @error('receipt_number') is-invalid @enderror">
+        @error('receipt_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
     <div class="col-12 col-md-6">
         <label class="form-label" for="quantity">القيمة</label>
         <input id="quantity" type="number" name="quantity" value="{{ old('quantity', $budgetOperation->quantity ?? '') }}" step="0.01" min="0.01" class="form-control @error('quantity') is-invalid @enderror" required>
@@ -55,3 +61,20 @@
     <button type="submit" class="btn btn-primary">حفظ</button>
     <a href="{{ route('budget-operations.index') }}" class="btn btn-light">إلغاء</a>
 </div>
+
+<script>
+    (function(){
+        const typeEl = document.getElementById('type');
+        const receiptGroup = document.getElementById('receipt_number_group');
+
+        if (! typeEl) return;
+
+        typeEl.addEventListener('change', function(){
+            if (this.value === 'in') {
+                receiptGroup.style.display = 'block';
+            } else {
+                receiptGroup.style.display = 'none';
+            }
+        });
+    })();
+</script>

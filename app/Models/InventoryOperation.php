@@ -14,6 +14,7 @@ class InventoryOperation extends Model
         'inventory_category_id',
         'type',
         'donor_name',
+        'receipt_number',
         'item_name',
         'quantity',
         'operation_date',

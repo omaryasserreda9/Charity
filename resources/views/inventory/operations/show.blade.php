@@ -18,6 +18,10 @@
             <dd>{{ optional($inventoryOperation->category)->title ?? 'بدون بند' }}</dd>
             <dt>اسم المتبرع / الجهة</dt>
             <dd>{{ $inventoryOperation->donor_name }}</dd>
+            @if($inventoryOperation->type === 'in')
+                <dt>رقم الإيصال</dt>
+                <dd>{{ $inventoryOperation->receipt_number ?? '—' }}</dd>
+            @endif
             <dt>اسم الصنف</dt>
             <dd>{{ $inventoryOperation->item_name }}</dd>
             <dt>الكمية</dt>

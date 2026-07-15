@@ -14,6 +14,7 @@ class BudgetOperation extends Model
         'budget_category_id',
         'type',
         'donor_name',
+        'receipt_number',
         'quantity',
         'operation_date',
     ];

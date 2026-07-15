@@ -105,6 +105,7 @@ class InventoryOperationController extends Controller
             'inventory_category_id' => ['nullable', 'exists:inventory_categories,id'],
             'type' => ['required', Rule::in(['in', 'out'])],
             'donor_name' => ['required', 'string', 'max:255'],
+            'receipt_number' => ['nullable', 'string', 'max:255', 'required_if:type,in'],
             'item_name' => ['required', 'string', 'max:255'],
             'quantity' => ['required', 'numeric', 'min:0.01'],
             'operation_date' => ['required', 'date'],

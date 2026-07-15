@@ -29,6 +29,12 @@
         @error('donor_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
+    <div class="col-12 col-md-6" id="receipt_number_group" style="display: {{ (string) old('type', $inventoryOperation->type ?? '') === (string) 'in' ? 'block' : 'none' }};">
+        <label class="form-label" for="receipt_number">رقم الإيصال</label>
+        <input id="receipt_number" type="text" name="receipt_number" value="{{ old('receipt_number', $inventoryOperation->receipt_number ?? '') }}" class="form-control @error('receipt_number') is-invalid @enderror">
+        @error('receipt_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
     <div class="col-12 col-md-6">
         <label class="form-label" for="item_name">اسم الصنف</label>
         <input id="item_name" type="text" name="item_name" value="{{ old('item_name', $inventoryOperation->item_name ?? '') }}" class="form-control @error('item_name') is-invalid @enderror" required>
@@ -52,3 +58,20 @@
     <button type="submit" class="btn btn-primary">حفظ</button>
     <a href="{{ route('inventory-operations.index') }}" class="btn btn-light">إلغاء</a>
 </div>
+
+<script>
+    (function(){
+        const typeEl = document.getElementById('type');
+        const receiptGroup = document.getElementById('receipt_number_group');
+
+        if (! typeEl) return;
+
+        typeEl.addEventListener('change', function(){
+            if (this.value === 'in') {
+                receiptGroup.style.display = 'block';
+            } else {
+                receiptGroup.style.display = 'none';
+            }
+        });
+    })();
+</script>
