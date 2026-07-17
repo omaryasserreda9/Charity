@@ -13,9 +13,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, HasCharityHomeScope, Notifiable;
-
+    use HasFactory, Notifiable;
     /**
      * The attributes that are mass assignable.
      *
@@ -45,14 +43,10 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'active' => 'boolean',
+    ];
 
     public function charityHome(): BelongsTo
     {
@@ -81,7 +75,7 @@ class User extends Authenticatable
         }
 
         return $this->roles()
-            ->whereHas('permissions', fn ($query) => $query->where('name', $permission))
+            ->whereHas('permissions', fn($query) => $query->where('name', $permission))
             ->exists();
     }
 }

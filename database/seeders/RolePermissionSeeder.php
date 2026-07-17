@@ -5,14 +5,11 @@ namespace Database\Seeders;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RolePermissionSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    private array $modules = [
+    private $modules = [
         'dashboard',
         'budget_categories',
         'budget_operations',
@@ -33,7 +30,7 @@ class RolePermissionSeeder extends Seeder
         'users',
     ];
 
-    private array $actions = [
+    private $actions = [
         'view',
         'add',
         'edit',
@@ -42,8 +39,10 @@ class RolePermissionSeeder extends Seeder
 
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
         $permissionNames = [];
 
@@ -54,23 +53,27 @@ class RolePermissionSeeder extends Seeder
         }
 
         $permissions = [];
+
         foreach ($permissionNames as $permissionName) {
-            $permissions[] = Permission::firstOrCreate([
-                'name' => $permissionName,
-            ], [
-                'description' => ucfirst(str_replace(['_', '.'], [' ', ' '], $permissionName)),
-            ]);
+            $permissions[] = Permission::firstOrCreate(
+                ['name' => $permissionName],
+                [
+                    'description' => ucfirst(str_replace(['_', '.'], [' ', ' '], $permissionName)),
+                ]
+            );
         }
 
-        $superAdminRole = Role::firstOrCreate([
-            'name' => 'Super Admin',
-        ], [
-            'description' => 'Full access to all system permissions.',
-        ]);
+        $superAdminRole = Role::firstOrCreate(
+            ['name' => 'Super Admin'],
+            [
+                'description' => 'Full access to all system permissions.',
+            ]
+        );
 
         $superAdminRole->permissions()->sync(collect($permissions)->pluck('id')->all());
 
         $superAdminUser = User::find(1);
+
         if ($superAdminUser) {
             $superAdminUser->roles()->syncWithoutDetaching([$superAdminRole->id]);
         }
