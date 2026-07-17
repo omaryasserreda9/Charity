@@ -43,6 +43,8 @@ a {
     width: 270px;
     height: 100vh;
     flex: 0 0 270px;
+    display: flex;
+    flex-direction: column;
     padding: 22px 18px;
     background: var(--sidebar);
     color: #fff;
@@ -87,6 +89,11 @@ a {
     display: grid;
     gap: 6px;
     margin-top: 22px;
+    /* allow the navigation to scroll when it exceeds viewport height */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+    padding-right: 4px; /* avoid content under scrollbar */
 }
 
 .sidebar-nav a {
