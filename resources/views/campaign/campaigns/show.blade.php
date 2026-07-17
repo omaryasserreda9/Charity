@@ -14,9 +14,13 @@
                 </span>
             </p>
         </div>
-        <div class="d-flex gap-2">
+            <div class="d-flex gap-2">
+            @can('campaigns.view')
             <a href="{{ route('campaigns.cases', $campaign) }}" class="btn btn-outline-secondary btn-sm">إدارة الحالات</a>
+            @endcan
+            @can('campaigns.edit')
             <a href="{{ route('campaigns.edit', $campaign) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
     </div>
 

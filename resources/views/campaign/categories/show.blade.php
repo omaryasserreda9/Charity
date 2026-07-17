@@ -10,7 +10,9 @@
                 <h2>{{ $campaignCategory->title }}</h2>
                 <p>عدد الحملات المرتبطة: {{ $campaignCategory->campaigns_count }}</p>
             </div>
+            @can('campaign_categories.edit')
             <a href="{{ route('campaign-categories.edit', $campaignCategory) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">

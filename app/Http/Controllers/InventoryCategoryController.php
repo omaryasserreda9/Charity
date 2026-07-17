@@ -9,6 +9,7 @@ use Illuminate\View\View;
 
 class InventoryCategoryController extends Controller
 {
+    protected string $permissionPrefix = 'inventory_categories';
     public function index(Request $request): View
     {
         $search = (string) $request->input('search', '');

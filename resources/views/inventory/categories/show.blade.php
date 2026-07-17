@@ -10,7 +10,9 @@
                 <h2>{{ $inventoryCategory->title }}</h2>
                 <p>عدد العمليات المرتبطة: {{ $inventoryCategory->operations_count }}</p>
             </div>
+            @can('inventory_categories.edit')
             <a href="{{ route('inventory-categories.edit', $inventoryCategory) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">

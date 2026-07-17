@@ -19,16 +19,20 @@
 @php
     $navItems = [
         ['label' => 'لوحة التحكم', 'icon' => 'fa-chart-line', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
-        ['label' => 'بنود الميزانية', 'icon' => 'fa-tags', 'route' => 'budget-categories.index', 'active' => request()->routeIs('budget-categories.*')],
-        ['label' => 'عمليات الميزانية', 'icon' => 'fa-wallet', 'route' => 'budget-operations.index', 'active' => request()->routeIs('budget-operations.*')],
-        ['label' => 'بنود المخزون', 'icon' => 'fa-boxes-stacked', 'route' => 'inventory-categories.index', 'active' => request()->routeIs('inventory-categories.*')],
-        ['label' => 'عمليات المخزون', 'icon' => 'fa-warehouse', 'route' => 'inventory-operations.index', 'active' => request()->routeIs('inventory-operations.*')],
-        ['label' => 'الحالات الإنسانية', 'icon' => 'fa-users', 'route' => 'humanitarian-cases.index', 'active' => request()->routeIs('humanitarian-cases.*') || request()->routeIs('humanitarian-case-files.*')],
-        ['label' => 'المناطق', 'icon' => 'fa-map-location-dot', 'route' => 'districts.index', 'active' => request()->routeIs('districts.*')],
-        ['label' => 'بنود الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*')],
-        ['label' => 'الحملات', 'icon' => 'fa-bullhorn', 'route' => 'campaigns.index', 'active' => request()->routeIs('campaigns.*')],
-        ['label' => 'الدلائل', 'icon' => 'fa-address-book', 'route' => 'case-referrers.index', 'active' => request()->routeIs('case-referrers.*')],
+        ['label' => 'بنود الميزانية', 'icon' => 'fa-tags', 'route' => 'budget-categories.index', 'active' => request()->routeIs('budget-categories.*'), 'permission' => 'budget_categories.view'],
+        ['label' => 'عمليات الميزانية', 'icon' => 'fa-wallet', 'route' => 'budget-operations.index', 'active' => request()->routeIs('budget-operations.*'), 'permission' => 'budget_operations.view'],
+        ['label' => 'بنود المخزون', 'icon' => 'fa-boxes-stacked', 'route' => 'inventory-categories.index', 'active' => request()->routeIs('inventory-categories.*'), 'permission' => 'inventory_categories.view'],
+        ['label' => 'عمليات المخزون', 'icon' => 'fa-warehouse', 'route' => 'inventory-operations.index', 'active' => request()->routeIs('inventory-operations.*'), 'permission' => 'inventory_operations.view'],
+        ['label' => 'الحالات الإنسانية', 'icon' => 'fa-users', 'route' => 'humanitarian-cases.index', 'active' => request()->routeIs('humanitarian-cases.*') || request()->routeIs('humanitarian-case-files.*'), 'permission' => 'humanitarian_cases.view'],
+        ['label' => 'المناطق', 'icon' => 'fa-map-location-dot', 'route' => 'districts.index', 'active' => request()->routeIs('districts.*'), 'permission' => 'districts.view'],
+        ['label' => 'بنود الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*'), 'permission' => 'campaign_categories.view'],
+        ['label' => 'الحملات', 'icon' => 'fa-bullhorn', 'route' => 'campaigns.index', 'active' => request()->routeIs('campaigns.*'), 'permission' => 'campaigns.view'],
+        ['label' => 'الدلائل', 'icon' => 'fa-address-book', 'route' => 'case-referrers.index', 'active' => request()->routeIs('case-referrers.*'), 'permission' => 'case_referrers.view'],
+        ['label' => 'بيوت الجمعيات', 'icon' => 'fa-home', 'route' => 'charity-homes.index', 'active' => request()->routeIs('charity-homes.*'), 'permission' => 'charity_homes.view'],
+        ['label' => 'المستخدمون', 'icon' => 'fa-user', 'route' => 'users.index', 'active' => request()->routeIs('users.*'), 'permission' => 'users.view'],
     ];
+
+    $navItems = array_filter($navItems, fn ($item) => ! isset($item['permission']) || (auth()->check() && auth()->user()->can($item['permission'])));
 @endphp
 
 <div class="app-shell">

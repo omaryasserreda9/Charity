@@ -14,7 +14,9 @@
                     </span>
                 </p>
             </div>
+            @can('humanitarian_cases.edit')
             <a href="{{ route('humanitarian-cases.edit', $humanitarianCase) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">

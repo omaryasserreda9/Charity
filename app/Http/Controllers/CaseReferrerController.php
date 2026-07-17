@@ -10,6 +10,7 @@ use Illuminate\View\View;
 
 class CaseReferrerController extends Controller
 {
+    protected string $permissionPrefix = 'case_referrers';
     public function index(Request $request): View
     {
         $search = (string) $request->input('search', '');

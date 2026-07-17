@@ -14,6 +14,7 @@ use App\Models\CaseReferrer;
 
 class CampaignController extends Controller
 {
+    protected string $permissionPrefix = 'campaigns';
     public function index(Request $request): View
     {
         $filters = $request->only(['search', 'campaign_category_id', 'district_id']);
@@ -57,7 +58,20 @@ class CampaignController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $campaign = Campaign::create($this->validatedAttributes($request));
-        $campaign->caseReferrers()->sync($this->validatedReferrerIds($request));
+
+        $referrerIds = $this->validatedReferrerIds($request);
+        if (! auth()->user()->isSuperAdmin() && ! empty($referrerIds)) {
+            $allowed = \App\Models\CaseReferrer::whereIn('id', $referrerIds)
+                ->where('charity_home_id', auth()->user()->charity_home_id)
+                ->pluck('id')
+                ->all();
+
+            if (count($allowed) !== count($referrerIds)) {
+                abort(403);
+            }
+        }
+
+        $campaign->caseReferrers()->sync($referrerIds);
 
         return redirect()->route('campaigns.index')->with('success', 'تم إنشاء الحملة بنجاح.');
     }
@@ -90,7 +104,20 @@ class CampaignController extends Controller
     public function update(Request $request, Campaign $campaign): RedirectResponse
     {
         $campaign->update($this->validatedAttributes($request));
-        $campaign->caseReferrers()->sync($this->validatedReferrerIds($request));
+
+        $referrerIds = $this->validatedReferrerIds($request);
+        if (! auth()->user()->isSuperAdmin() && ! empty($referrerIds)) {
+            $allowed = \App\Models\CaseReferrer::whereIn('id', $referrerIds)
+                ->where('charity_home_id', auth()->user()->charity_home_id)
+                ->pluck('id')
+                ->all();
+
+            if (count($allowed) !== count($referrerIds)) {
+                abort(403);
+            }
+        }
+
+        $campaign->caseReferrers()->sync($referrerIds);
 
         return redirect()->route('campaigns.index')->with('success', 'تم تحديث الحملة بنجاح.');
     }
@@ -104,6 +131,7 @@ class CampaignController extends Controller
 
     public function cases(Request $request, Campaign $campaign): View
     {
+        $this->authorize('campaigns.view');
         $filters = $request->only([
             'search',
             'district_id',
@@ -151,12 +179,25 @@ class CampaignController extends Controller
 
     public function syncCases(Request $request, Campaign $campaign): RedirectResponse
     {
+        $this->authorize('campaigns.edit');
         $validated = $request->validate([
             'humanitarian_case_ids' => ['nullable', 'array'],
             'humanitarian_case_ids.*' => ['integer', 'exists:humanitarian_cases,id'],
         ]);
 
-        $campaign->humanitarianCases()->sync($validated['humanitarian_case_ids'] ?? []);
+        $caseIds = $validated['humanitarian_case_ids'] ?? [];
+        if (! auth()->user()->isSuperAdmin() && ! empty($caseIds)) {
+            $allowed = \App\Models\HumanitarianCase::whereIn('id', $caseIds)
+                ->where('charity_home_id', auth()->user()->charity_home_id)
+                ->pluck('id')
+                ->all();
+
+            if (count($allowed) !== count($caseIds)) {
+                abort(403);
+            }
+        }
+
+        $campaign->humanitarianCases()->sync($caseIds);
 
         return redirect()
             ->route('campaigns.cases', $campaign)
@@ -166,6 +207,7 @@ class CampaignController extends Controller
 
     public function markDone(Campaign $campaign): RedirectResponse
     {
+        $this->authorize('campaigns.edit');
         $campaign->update(['status' => 'done']);
 
         return redirect()
@@ -175,6 +217,7 @@ class CampaignController extends Controller
 
     public function exportCases(Request $request, Campaign $campaign)
     {
+        $this->authorize('campaigns.view');
         $filters = $request->only([
             'search',
             'district_id',

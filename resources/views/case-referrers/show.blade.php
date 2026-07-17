@@ -24,7 +24,9 @@
         </dl>
 
         <div class="d-flex gap-2 mt-3">
+            @can('case_referrers.edit')
             <a href="{{ route('case-referrers.edit', $caseReferrer) }}" class="btn btn-primary">تعديل</a>
+            @endcan
             <a href="{{ route('case-referrers.index') }}" class="btn btn-light">رجوع</a>
         </div>
     </section>

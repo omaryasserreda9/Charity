@@ -10,10 +10,12 @@
                 <h2>الدليل</h2>
                 <p>إدارة الدلائل المرتبطة بالمناطق.</p>
             </div>
+            @can('case_referrers.add')
             <a href="{{ route('case-referrers.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
                 إضافة دليل
             </a>
+            @endcan
         </div>
 
         <form method="GET" action="{{ route('case-referrers.index') }}" class="filter-bar mb-3">
@@ -47,8 +49,12 @@
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn-sm btn-light" href="{{ route('case-referrers.show', $referrer) }}">عرض</a>
+                                    @can('case_referrers.edit')
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('case-referrers.edit', $referrer) }}">تعديل</a>
+                                    @endcan
+                                    @can('case_referrers.delete')
                                     <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteReferrer{{ $referrer->id }}">حذف</button>
+                                    @endcan
                                 </div>
 
                                 <div class="modal fade" id="deleteReferrer{{ $referrer->id }}" tabindex="-1" aria-hidden="true">
@@ -61,11 +67,13 @@
                                             <div class="modal-body">هل تريد حذف هذا الدليل؟ سيصبح الحقل فارغًا في الحالات الإنسانية المرتبطة به.</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                                                @can('case_referrers.delete')
                                                 <form method="POST" action="{{ route('case-referrers.destroy', $referrer) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </div>

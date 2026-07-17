@@ -10,10 +10,12 @@
                 <h2>سجل العمليات</h2>
                 <p>بحث وتصفية حسب البند والتاريخ.</p>
             </div>
+            @can('inventory_operations.add')
             <a href="{{ route('inventory-operations.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
                 إضافة عملية
             </a>
+            @endcan
         </div>
 
         <form method="GET" action="{{ route('inventory-operations.index') }}" class="filter-bar mb-3">
@@ -63,8 +65,12 @@
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn-sm btn-light" href="{{ route('inventory-operations.show', $operation) }}">عرض</a>
+                                    @can('inventory_operations.edit')
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('inventory-operations.edit', $operation) }}">تعديل</a>
+                                    @endcan
+                                    @can('inventory_operations.delete')
                                     <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteOperation{{ $operation->id }}">حذف</button>
+                                    @endcan
                                 </div>
 
                                 <div class="modal fade" id="deleteOperation{{ $operation->id }}" tabindex="-1" aria-hidden="true">
@@ -77,11 +83,13 @@
                                             <div class="modal-body">هل تريد حذف هذه العملية من سجل المخزون؟</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                                                @can('inventory_operations.delete')
                                                 <form method="POST" action="{{ route('inventory-operations.destroy', $operation) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </div>

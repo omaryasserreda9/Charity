@@ -10,9 +10,11 @@
             <h2>{{ $campaign->title }}</h2>
             <p>اختر الحالات الإنسانية المرتبطة بهذه الحملة.</p>
         </div>
-        <div class="d-flex gap-2">
+            <div class="d-flex gap-2">
             <a href="{{ route('campaigns.show', $campaign) }}" class="btn btn-light btn-sm">عودة للحملة</a>
+            @can('campaigns.view')
             <a href="{{ route('campaigns.cases.export', $campaign) }}?{{ http_build_query($filters) }}" class="btn btn-outline-secondary btn-sm">تنزيل Excel</a>
+            @endcan
         </div>
     </div>
 
@@ -100,7 +102,9 @@
 
         @if($humanitarianCases->isNotEmpty())
         <div class="d-flex gap-2 mt-3">
+            @can('campaigns.edit')
             <button type="submit" class="btn btn-primary">حفظ</button>
+            @endcan
             <a href="{{ route('campaigns.index') }}" class="btn btn-light">إلغاء</a>
         </div>
         @endif
@@ -117,11 +121,13 @@
             <div class="modal-body">تم حفظ الحالات بنجاح. هل تريد تغيير حالة الحملة إلى <strong>منجزة</strong>؟</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">لا، إبقاء قيد التنفيذ</button>
+                @can('campaigns.edit')
                 <form method="POST" action="{{ route('campaigns.mark-done', $campaign) }}">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="btn btn-success">نعم، تحديد كمنجزة</button>
                 </form>
+                @endcan
             </div>
         </div>
     </div>

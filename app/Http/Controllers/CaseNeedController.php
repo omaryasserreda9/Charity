@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class CaseNeedController extends Controller
 {
+    protected string $permissionPrefix = 'humanitarian_cases';
     public function index(HumanitarianCase $humanitarianCase): RedirectResponse
     {
         return redirect()->route('humanitarian-cases.show', $humanitarianCase);

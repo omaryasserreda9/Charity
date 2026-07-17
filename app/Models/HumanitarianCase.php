@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasCharityHomeScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Campaign;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 
 class HumanitarianCase extends Model
 {
-    use HasFactory;
+    use HasFactory, HasCharityHomeScope;
 
     protected $fillable = [
         'name',

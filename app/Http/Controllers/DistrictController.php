@@ -9,6 +9,7 @@ use Illuminate\View\View;
 
 class DistrictController extends Controller
 {
+    protected string $permissionPrefix = 'districts';
     public function index(Request $request): View
     {
         $search = (string) $request->input('search', '');

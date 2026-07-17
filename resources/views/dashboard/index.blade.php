@@ -28,10 +28,12 @@
                     <h2>آخر التبرعات</h2>
                     <p>آخر عمليات الوارد في الميزانية.</p>
                 </div>
+                @can('budget_operations.add')
                 <a href="{{ route('budget-operations.create') }}" class="btn btn-primary btn-sm">
                     <i class="fa-solid fa-plus ms-1"></i>
                     إضافة عملية
                 </a>
+                @endcan
             </div>
 
             <div class="table-responsive">

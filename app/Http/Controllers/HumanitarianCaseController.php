@@ -13,6 +13,7 @@ use Illuminate\View\View;
 
 class HumanitarianCaseController extends Controller
 {
+    protected string $permissionPrefix = 'humanitarian_cases';
     public function index(Request $request): View
     {
         $filters = $request->only(['search', 'type', 'district_id', 'referrer_id']);

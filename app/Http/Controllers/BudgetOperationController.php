@@ -12,6 +12,7 @@ use Illuminate\View\View;
 
 class BudgetOperationController extends Controller
 {
+    protected string $permissionPrefix = 'budget_operations';
     public function index(Request $request): View
     {
         $filters = $request->only(['search', 'budget_category_id', 'date_from', 'date_to']);

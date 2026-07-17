@@ -10,10 +10,12 @@
                 <h2>سجل الحملات</h2>
                 <p>بحث وتصفية حسب البند.</p>
             </div>
+            @can('campaigns.add')
             <a href="{{ route('campaigns.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
                 إضافة حملة
             </a>
+            @endcan
         </div>
 
         <form method="GET" action="{{ route('campaigns.index') }}" class="filter-bar mb-3">
@@ -69,9 +71,15 @@
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn-sm btn-light" href="{{ route('campaigns.show', $campaign) }}">عرض</a>
+                                    @can('campaigns.view')
                                     <a class="btn btn-sm btn-outline-secondary" href="{{ route('campaigns.cases', $campaign) }}">الحالات</a>
+                                    @endcan
+                                    @can('campaigns.edit')
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('campaigns.edit', $campaign) }}">تعديل</a>
+                                    @endcan
+                                    @can('campaigns.delete')
                                     <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteCampaign{{ $campaign->id }}">حذف</button>
+                                    @endcan
                                 </div>
 
                                 <div class="modal fade" id="deleteCampaign{{ $campaign->id }}" tabindex="-1" aria-hidden="true">
@@ -84,11 +92,13 @@
                                             <div class="modal-body">هل تريد حذف هذه الحملة؟</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                                                @can('campaigns.delete')
                                                 <form method="POST" action="{{ route('campaigns.destroy', $campaign) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </div>

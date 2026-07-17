@@ -12,6 +12,7 @@ use Illuminate\View\View;
 
 class InventoryOperationController extends Controller
 {
+    protected string $permissionPrefix = 'inventory_operations';
     public function index(Request $request): View
     {
         $filters = $request->only(['search', 'inventory_category_id', 'date_from', 'date_to']);

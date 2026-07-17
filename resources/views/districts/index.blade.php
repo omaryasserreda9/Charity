@@ -10,10 +10,12 @@
                 <h2>المناطق</h2>
                 <p>إدارة المناطق المستخدمة في الحملات.</p>
             </div>
-            <a href="{{ route('districts.create') }}" class="btn btn-primary btn-sm">
+                @can('districts.add')
+                <a href="{{ route('districts.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
                 إضافة منطقة
             </a>
+                @endcan
         </div>
 
         <form method="GET" action="{{ route('districts.index') }}" class="filter-bar mb-3">
@@ -41,8 +43,12 @@
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn-sm btn-light" href="{{ route('districts.show', $district) }}">عرض</a>
+                                    @can('districts.edit')
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('districts.edit', $district) }}">تعديل</a>
+                                    @endcan
+                                    @can('districts.delete')
                                     <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteDistrict{{ $district->id }}">حذف</button>
+                                    @endcan
                                 </div>
 
                                 <div class="modal fade" id="deleteDistrict{{ $district->id }}" tabindex="-1" aria-hidden="true">
@@ -55,11 +61,13 @@
                                             <div class="modal-body">لا يمكن حذف المنطقة إذا كانت هناك حملات مرتبطة بها.</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                                                @can('districts.delete')
                                                 <form method="POST" action="{{ route('districts.destroy', $district) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </div>

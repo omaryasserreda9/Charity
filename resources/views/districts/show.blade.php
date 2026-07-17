@@ -10,7 +10,9 @@
                 <h2>{{ $district->title }}</h2>
                 <p>عدد الحملات المرتبطة: {{ $district->campaigns_count }}</p>
             </div>
+            @can('districts.edit')
             <a href="{{ route('districts.edit', $district) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">

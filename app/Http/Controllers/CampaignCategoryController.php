@@ -9,6 +9,7 @@ use Illuminate\View\View;
 
 class CampaignCategoryController extends Controller
 {
+    protected string $permissionPrefix = 'campaign_categories';
     public function index(Request $request): View
     {
         $search = (string) $request->input('search', '');

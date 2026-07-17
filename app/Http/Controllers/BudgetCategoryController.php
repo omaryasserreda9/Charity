@@ -9,6 +9,7 @@ use Illuminate\View\View;
 
 class BudgetCategoryController extends Controller
 {
+    protected string $permissionPrefix = 'budget_categories';
     public function index(Request $request): View
     {
         $search = (string) $request->input('search', '');

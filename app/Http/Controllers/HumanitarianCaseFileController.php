@@ -10,8 +10,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class HumanitarianCaseFileController extends Controller
 {
+    protected string $permissionPrefix = 'humanitarian_cases';
     public function preview(HumanitarianCaseFile $humanitarianCaseFile): BinaryFileResponse
     {
+        $this->authorize('humanitarian_cases.view');
         return response()->file(
             Storage::disk('public')->path($humanitarianCaseFile->path),
             [
@@ -23,6 +25,7 @@ class HumanitarianCaseFileController extends Controller
 
     public function download(HumanitarianCaseFile $humanitarianCaseFile): StreamedResponse
     {
+        $this->authorize('humanitarian_cases.view');
         return Storage::disk('public')->download(
             $humanitarianCaseFile->path,
             $humanitarianCaseFile->original_name
@@ -31,6 +34,7 @@ class HumanitarianCaseFileController extends Controller
 
     public function destroy(HumanitarianCaseFile $humanitarianCaseFile): RedirectResponse
     {
+        $this->authorize('humanitarian_cases.delete');
         Storage::disk('public')->delete($humanitarianCaseFile->path);
         $humanitarianCaseFile->delete();
 

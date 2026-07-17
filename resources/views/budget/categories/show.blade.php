@@ -10,7 +10,9 @@
                 <h2>{{ $budgetCategory->title }}</h2>
                 <p>عدد العمليات المرتبطة: {{ $budgetCategory->operations_count }}</p>
             </div>
+            @can('budget_categories.edit')
             <a href="{{ route('budget-categories.edit', $budgetCategory) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">

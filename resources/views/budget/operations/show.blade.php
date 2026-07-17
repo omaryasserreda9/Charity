@@ -10,12 +10,14 @@
                 <h2>عملية #{{ $budgetOperation->id }}</h2>
                 <p>{{ $budgetOperation->type === 'in' ? 'وارد' : 'صادر' }}</p>
             </div>
+            @can('budget_operations.edit')
             <a href="{{ route('budget-operations.edit', $budgetOperation) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">
             <dt>البند</dt>
-            <dd>{{ optional($budgetOperation->budget_category)->title ?? 'بدون بند' }}</dd>
+            <dd>{{ optional($budgetOperation->category)->title ?? 'بدون بند' }}</dd>
             <dt>اسم المتبرع / الجهة</dt>
             <dd>{{ $budgetOperation->donor_name }}</dd>
             @if($budgetOperation->type === 'in')

@@ -17,7 +17,9 @@ use App\Http\Controllers\HumanitarianCaseController;
 use App\Http\Controllers\HumanitarianCaseFileController;
 use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\InventoryOperationController;
+use App\Http\Controllers\CharityHomeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -59,5 +61,7 @@ Route::middleware('auth')->group(function (): void {
         ->name('campaigns.cases.export');
     Route::delete('humanitarian-case-files/{humanitarianCaseFile}', [HumanitarianCaseFileController::class, 'destroy'])
         ->name('humanitarian-case-files.destroy');
+    Route::resource('charity-homes', CharityHomeController::class);
+    Route::resource('users', UserController::class);
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

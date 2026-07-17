@@ -10,10 +10,12 @@
                 <h2>البنود</h2>
                 <p>إدارة بنود عمليات الميزانية.</p>
             </div>
+            @can('budget_categories.add')
             <a href="{{ route('budget-categories.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
                 إضافة بند
             </a>
+            @endcan
         </div>
 
         <form method="GET" action="{{ route('budget-categories.index') }}" class="filter-bar mb-3">
@@ -41,8 +43,12 @@
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn-sm btn-light" href="{{ route('budget-categories.show', $category) }}">عرض</a>
+                                    @can('budget_categories.edit')
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('budget-categories.edit', $category) }}">تعديل</a>
+                                    @endcan
+                                    @can('budget_categories.delete')
                                     <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteCategory{{ $category->id }}">حذف</button>
+                                    @endcan
                                 </div>
 
                                 <div class="modal fade" id="deleteCategory{{ $category->id }}" tabindex="-1" aria-hidden="true">
@@ -55,11 +61,13 @@
                                             <div class="modal-body">سيتم حذف البند فقط، وستظهر عملياته باسم "بدون بند".</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                                                @can('budget_categories.delete')
                                                 <form method="POST" action="{{ route('budget-categories.destroy', $category) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </div>

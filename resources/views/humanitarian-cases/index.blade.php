@@ -10,10 +10,12 @@
                 <h2>سجل الحالات</h2>
                 <p>بحث وتصفية حسب نوع الحالة.</p>
             </div>
+            @can('humanitarian_cases.add')
             <a href="{{ route('humanitarian-cases.create') }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus ms-1"></i>
                 إضافة حالة
             </a>
+            @endcan
         </div>
 
         <form method="GET" action="{{ route('humanitarian-cases.index') }}" class="filter-bar mb-3">
@@ -75,8 +77,12 @@
                             <td>
                                 <div class="table-actions">
                                     <a class="btn btn-sm btn-light" href="{{ route('humanitarian-cases.show', $case) }}">عرض</a>
+                                    @can('humanitarian_cases.edit')
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('humanitarian-cases.edit', $case) }}">تعديل</a>
+                                    @endcan
+                                    @can('humanitarian_cases.delete')
                                     <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteCase{{ $case->id }}">حذف</button>
+                                    @endcan
                                 </div>
 
                                 <div class="modal fade" id="deleteCase{{ $case->id }}" tabindex="-1" aria-hidden="true">
@@ -89,11 +95,13 @@
                                             <div class="modal-body">هل تريد حذف هذه الحالة وجميع مرفقاتها؟</div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                                                @can('humanitarian_cases.delete')
                                                 <form method="POST" action="{{ route('humanitarian-cases.destroy', $case) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">تأكيد الحذف</button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </div>

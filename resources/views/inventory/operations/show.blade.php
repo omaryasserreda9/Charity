@@ -10,7 +10,9 @@
                 <h2>عملية #{{ $inventoryOperation->id }}</h2>
                 <p>{{ $inventoryOperation->type === 'in' ? 'وارد' : 'صادر' }}</p>
             </div>
+            @can('inventory_operations.edit')
             <a href="{{ route('inventory-operations.edit', $inventoryOperation) }}" class="btn btn-primary btn-sm">تعديل</a>
+            @endcan
         </div>
 
         <dl class="details-list">
