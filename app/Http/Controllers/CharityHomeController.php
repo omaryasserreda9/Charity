@@ -21,7 +21,7 @@ class CharityHomeController extends Controller
 
         $charityHomes = CharityHome::query()
             ->withCount('users')
-            ->latest()
+            ->latest('id')
             ->paginate(10);
 
         $breadcrumbs = ['بيوت الجمعيات' => route('charity-homes.index')];

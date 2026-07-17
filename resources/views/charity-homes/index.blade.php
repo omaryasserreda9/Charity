@@ -42,6 +42,7 @@
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger">حذف</button>
                                 </form>
+                                @endcan
                             </td>
                         </tr>
                     @empty
