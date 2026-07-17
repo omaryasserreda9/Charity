@@ -71,7 +71,7 @@ class User extends Authenticatable
     public function hasPermissionTo(string $permission): bool
     {
         if ($this->isSuperAdmin()) {
-            return true;
+            return str_starts_with($permission, 'charity_homes.') || str_starts_with($permission, 'users.');
         }
 
         return $this->roles()

@@ -32,12 +32,17 @@
         ['label' => 'المستخدمون', 'icon' => 'fa-user', 'route' => 'users.index', 'active' => request()->routeIs('users.*'), 'permission' => 'users.view'],
     ];
 
-    $navItems = array_filter($navItems, fn ($item) => ! isset($item['permission']) || (auth()->check() && auth()->user()->can($item['permission'])));
+    $navItems = array_filter($navItems, function ($item) {
+        if ($item['route'] === 'dashboard' && auth()->check() && auth()->user()->isSuperAdmin()) {
+            return false;
+        }
+        return ! isset($item['permission']) || (auth()->check() && auth()->user()->can($item['permission']));
+    });
 @endphp
 
 <div class="app-shell">
     <aside class="app-sidebar">
-        <a class="brand" href="{{ route('dashboard') }}">
+        <a class="brand" href="{{ auth()->check() && auth()->user()->isSuperAdmin() ? route('charity-homes.index') : route('dashboard') }}">
             <span class="brand-icon"><i class="fa-solid fa-hand-holding-heart"></i></span>
             <span>
                 <strong>{{ config('app.name') }}</strong>
@@ -83,7 +88,7 @@
             @isset($breadcrumbs)
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">الرئيسية</a></li>
+                        <li class="breadcrumb-item"><a href="{{ auth()->check() && auth()->user()->isSuperAdmin() ? route('charity-homes.index') : route('dashboard') }}">الرئيسية</a></li>
                         @foreach($breadcrumbs as $label => $url)
                             <li class="breadcrumb-item {{ $loop->last ? 'active' : '' }}" @if($loop->last) aria-current="page" @endif>
                                 @if($loop->last)

@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('charity_homes', function (Blueprint $table): void {
             $table->id();
             $table->string('title');
+            $table->timestamps();
         });
 
         DB::table('charity_homes')->insert([

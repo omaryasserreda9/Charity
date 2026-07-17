@@ -10,8 +10,12 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke()
     {
+        if (auth()->check() && auth()->user()->isSuperAdmin()) {
+            return redirect()->route('charity-homes.index');
+        }
+
         $totalDonations = (float) BudgetOperation::where('type', 'in')->sum('quantity');
         $humanitarianCasesCount = HumanitarianCase::count();
         $activeCampaignsCount = Campaign::where('status', 'pending')->count();
