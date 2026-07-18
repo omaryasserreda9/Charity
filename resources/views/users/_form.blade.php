@@ -1,3 +1,6 @@
+@php
+    $user = $user ?? null;
+@endphp
 @csrf
 
 <div class="mb-3">

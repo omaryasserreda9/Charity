@@ -45,7 +45,9 @@ class UserController extends Controller
     {
         $this->authorize('users.add');
 
-        $roles = Role::orderBy('name')->get();
+        $roles = auth()->user()->isSuperAdmin()
+            ? Role::orderBy('name')->get()
+            : Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
         $charityHomes = auth()->user()->isSuperAdmin()
             ? CharityHome::orderBy('title')->get()
             : CharityHome::where('id', auth()->user()->charity_home_id)->orderBy('title')->get();
@@ -76,6 +78,10 @@ class UserController extends Controller
         $user = User::create($attributes);
         $user->roles()->sync($request->input('roles', []));
 
+        if (auth()->user()->isSuperAdmin()) {
+            $this->handleCharityHomeAssignment($user, null, $user->charity_home_id);
+        }
+
         return redirect()->route('users.index')->with('success', 'تم إنشاء المستخدم بنجاح.');
     }
 
@@ -99,7 +105,9 @@ class UserController extends Controller
         $this->authorize('users.edit');
         $this->ensureUserManageable($user);
 
-        $roles = Role::orderBy('name')->get();
+        $roles = auth()->user()->isSuperAdmin()
+            ? Role::orderBy('name')->get()
+            : Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
         $charityHomes = auth()->user()->isSuperAdmin()
             ? CharityHome::orderBy('title')->get()
             : CharityHome::where('id', auth()->user()->charity_home_id)->orderBy('title')->get();
@@ -133,8 +141,14 @@ class UserController extends Controller
 
         $attributes['active'] = $request->boolean('active', $user->active ?? true);
 
+        $oldCharityHomeId = $user->charity_home_id;
+
         $user->update($attributes);
         $user->roles()->sync($request->input('roles', []));
+
+        if (auth()->user()->isSuperAdmin()) {
+            $this->handleCharityHomeAssignment($user, $oldCharityHomeId, $user->charity_home_id);
+        }
 
         return redirect()->route('users.index')->with('success', 'تم تحديث المستخدم بنجاح.');
     }
@@ -179,7 +193,7 @@ class UserController extends Controller
                 'nullable',
                 Rule::exists('charity_homes', 'id'),
                 function ($attribute, $value, $fail) use ($user) {
-                    if ($user && $user->charity_home_id && $value && $value !== $user->charity_home_id) {
+                    if (! auth()->user()->isSuperAdmin() && $user && $user->charity_home_id && $value && $value !== $user->charity_home_id) {
                         $fail('لا يمكن تغيير بيت الجمعية لمستخدم تم تعيينه بالفعل.');
                     }
                 },
@@ -188,5 +202,46 @@ class UserController extends Controller
             'roles' => ['array'],
             'roles.*' => [Rule::exists('roles', 'id')],
         ]);
+    }
+
+    private function handleCharityHomeAssignment(User $user, ?int $oldCharityHomeId, ?int $newCharityHomeId): void
+    {
+        if ($oldCharityHomeId === $newCharityHomeId) {
+            return;
+        }
+
+        // Case 1: Assigned to a new home
+        if ($newCharityHomeId !== null) {
+            // Find other users assigned to this home
+            $oldUsers = User::where('charity_home_id', $newCharityHomeId)
+                ->where('id', '!=', $user->id)
+                ->get();
+
+            foreach ($oldUsers as $oldUser) {
+                // Remove their permissions
+                $oldUser->roles()->detach();
+                $oldUser->update(['charity_home_id' => null]);
+            }
+
+            // Find or create the Charity Home Manager role
+            $managerRole = Role::firstOrCreate(
+                ['name' => 'Charity Home Manager'],
+                ['description' => 'Manager of a Charity Home with all permissions except charity homes management.']
+            );
+
+            // Sync all permissions except charity_homes.*
+            $permissions = \App\Models\Permission::where('name', 'not like', 'charity_homes.%')->get();
+            $managerRole->permissions()->sync($permissions->pluck('id')->all());
+
+            // Assign role to the user
+            $user->roles()->syncWithoutDetaching([$managerRole->id]);
+        }
+        // Case 2: Unassigned from a home
+        elseif ($oldCharityHomeId !== null) {
+            $managerRole = Role::where('name', 'Charity Home Manager')->first();
+            if ($managerRole) {
+                $user->roles()->detach($managerRole->id);
+            }
+        }
     }
 }
