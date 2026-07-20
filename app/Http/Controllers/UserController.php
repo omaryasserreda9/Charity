@@ -158,6 +158,8 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $attributes['password'] = Hash::make($request->input('password'));
+        } else {
+            unset($attributes['password']);
         }
 
         if ($user->id === 1) {
@@ -239,7 +241,7 @@ class UserController extends Controller
 
     private function validatedAttributes(Request $request, ?User $user = null): array
     {
-        return $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user)],
             'password' => $user
@@ -267,7 +269,21 @@ class UserController extends Controller
                     $query->where('name', 'not like', 'charity_homes.%');
                 }),
             ],
+        ];
+
+        // When changing a password, require the authenticated user's own password.
+        if ($user && $request->filled('password')) {
+            $rules['current_password'] = ['required', 'current_password'];
+        }
+
+        $validated = $request->validate($rules, [
+            'current_password.required' => 'يجب إدخال كلمة مرورك الحالية لتغيير كلمة المرور.',
+            'current_password.current_password' => 'كلمة المرور الحالية غير صحيحة.',
         ]);
+
+        unset($validated['current_password']);
+
+        return $validated;
     }
 
     private function handleCharityHomeAssignment(User $user, ?int $oldCharityHomeId, ?int $newCharityHomeId): void

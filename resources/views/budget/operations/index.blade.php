@@ -9,7 +9,7 @@
         <div class="stat-card">
             <span class="stat-icon text-bg-success"><i class="fa-solid fa-wallet"></i></span>
             <div>
-                <p>الرصيد الحالي</p>
+                <p>{{ collect($filters)->filter()->isNotEmpty() ? 'صافي التصفية' : 'الرصيد الحالي' }}</p>
                 <strong>{{ number_format($currentBalance, 2) }}</strong>
             </div>
         </div>

@@ -17,19 +17,15 @@ class BudgetOperationController extends Controller
     {
         $filters = $request->only(['search', 'budget_category_id', 'date_from', 'date_to']);
         $categories = BudgetCategory::orderBy('title')->get();
-        $currentBalance = $this->currentBalance();
 
-        $operations = BudgetOperation::query()
+        $filteredQuery = $this->filteredOperationsQuery($filters);
+
+        $totalIn = (float) (clone $filteredQuery)->where('type', 'in')->sum('quantity');
+        $totalOut = (float) (clone $filteredQuery)->where('type', 'out')->sum('quantity');
+        $currentBalance = $totalIn - $totalOut;
+
+        $operations = (clone $filteredQuery)
             ->with('category')
-            ->when($filters['search'] ?? null, function ($query, string $search): void {
-                $query->where(function ($query) use ($search): void {
-                    $query->where('donor_name', 'like', "%{$search}%")
-                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('title', 'like', "%{$search}%"));
-                });
-            })
-            ->when($filters['budget_category_id'] ?? null, fn ($query, $categoryId) => $query->where('budget_category_id', $categoryId))
-            ->when($filters['date_from'] ?? null, fn ($query, $date) => $query->whereDate('operation_date', '>=', $date))
-            ->when($filters['date_to'] ?? null, fn ($query, $date) => $query->whereDate('operation_date', '<=', $date))
             ->latest('operation_date')
             ->latest()
             ->paginate(10)
@@ -145,11 +141,25 @@ class BudgetOperationController extends Controller
             'budget_category_id' => ['nullable', 'exists:budget_categories,id'],
             'donor_id' => ['nullable', 'exists:donors,id'],
             'type' => ['required', Rule::in(['in', 'out'])],
-            'donor_name' => ['required', 'string', 'max:255'],
-            'receipt_number' => ['nullable', 'string', 'max:255', 'required_if:type,in'],
+            'donor_name' => ['nullable', 'string', 'max:255'],
+            'receipt_number' => ['nullable', 'string', 'max:255'],
             'quantity' => ['required', 'numeric', 'min:0.01'],
             'operation_date' => ['required', 'date'],
         ]);
+    }
+
+    private function filteredOperationsQuery(array $filters)
+    {
+        return BudgetOperation::query()
+            ->when($filters['search'] ?? null, function ($query, string $search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('donor_name', 'like', "%{$search}%")
+                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('title', 'like', "%{$search}%"));
+                });
+            })
+            ->when($filters['budget_category_id'] ?? null, fn ($query, $categoryId) => $query->where('budget_category_id', $categoryId))
+            ->when($filters['date_from'] ?? null, fn ($query, $date) => $query->whereDate('operation_date', '>=', $date))
+            ->when($filters['date_to'] ?? null, fn ($query, $date) => $query->whereDate('operation_date', '<=', $date));
     }
 
     private function ensureBalanceIsEnough(array $attributes, ?BudgetOperation $original = null): void

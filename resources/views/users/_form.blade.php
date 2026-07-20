@@ -43,6 +43,21 @@
     @enderror
 </div>
 
+@if(isset($user))
+<div class="mb-3" id="current_password_group">
+    <label class="form-label" for="current_password">كلمة مرورك الحالية</label>
+    <input id="current_password" type="password" name="current_password"
+        class="form-control @error('current_password') is-invalid @enderror"
+        autocomplete="current-password">
+    <small class="form-text text-muted">
+        مطلوبة عند تغيير كلمة المرور للتأكد من هويتك.
+    </small>
+    @error('current_password')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+@endif
+
 @php
     $moduleTranslations = [
         'dashboard' => 'لوحة التحكم',
