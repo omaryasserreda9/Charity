@@ -45,21 +45,29 @@ class UserController extends Controller
     {
         $this->authorize('users.add');
 
-        $roles = auth()->user()->isSuperAdmin()
-            ? Role::orderBy('name')->get()
-            : Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
+        $roles = Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
         $charityHomes = auth()->user()->isSuperAdmin()
             ? CharityHome::orderBy('title')->get()
             : CharityHome::where('id', auth()->user()->charity_home_id)->orderBy('title')->get();
 
         abort_if(! auth()->user()->isSuperAdmin() && ! auth()->user()->charity_home_id, 403);
 
+        $permissionGroups = collect();
+        if (! auth()->user()->isSuperAdmin()) {
+            $permissionGroups = \App\Models\Permission::where('name', 'not like', 'charity_homes.%')
+                ->get()
+                ->groupBy(function ($permission) {
+                    $parts = explode('.', $permission->name);
+                    return $parts[0] ?? 'other';
+                });
+        }
+
         $breadcrumbs = [
             'المستخدمون' => route('users.index'),
             'إضافة مستخدم' => route('users.create'),
         ];
 
-        return view('users.create', compact('roles', 'charityHomes', 'breadcrumbs'));
+        return view('users.create', compact('roles', 'charityHomes', 'permissionGroups', 'breadcrumbs'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -76,10 +84,18 @@ class UserController extends Controller
         }
 
         $user = User::create($attributes);
-        $user->roles()->sync($request->input('roles', []));
 
         if (auth()->user()->isSuperAdmin()) {
+            $rolesToSync = $request->input('roles', []);
+            $superAdminRole = Role::where('name', 'Super Admin')->first();
+            if ($superAdminRole) {
+                $rolesToSync = array_filter($rolesToSync, fn($id) => (int)$id !== $superAdminRole->id);
+            }
+            $user->roles()->sync($rolesToSync);
             $this->handleCharityHomeAssignment($user, null, $user->charity_home_id);
+        } else {
+            $permissionsToSync = $request->input('permissions', []);
+            $user->permissions()->sync($permissionsToSync);
         }
 
         return redirect()->route('users.index')->with('success', 'تم إنشاء المستخدم بنجاح.');
@@ -105,19 +121,28 @@ class UserController extends Controller
         $this->authorize('users.edit');
         $this->ensureUserManageable($user);
 
-        $roles = auth()->user()->isSuperAdmin()
-            ? Role::orderBy('name')->get()
-            : Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
+        $roles = Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
         $charityHomes = auth()->user()->isSuperAdmin()
             ? CharityHome::orderBy('title')->get()
             : CharityHome::where('id', auth()->user()->charity_home_id)->orderBy('title')->get();
+
+        $permissionGroups = collect();
+        if (! auth()->user()->isSuperAdmin()) {
+            $user->load('permissions');
+            $permissionGroups = \App\Models\Permission::where('name', 'not like', 'charity_homes.%')
+                ->get()
+                ->groupBy(function ($permission) {
+                    $parts = explode('.', $permission->name);
+                    return $parts[0] ?? 'other';
+                });
+        }
 
         $breadcrumbs = [
             'المستخدمون' => route('users.index'),
             'تعديل المستخدم' => route('users.edit', $user),
         ];
 
-        return view('users.edit', compact('user', 'roles', 'charityHomes', 'breadcrumbs'));
+        return view('users.edit', compact('user', 'roles', 'charityHomes', 'permissionGroups', 'breadcrumbs'));
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -144,10 +169,24 @@ class UserController extends Controller
         $oldCharityHomeId = $user->charity_home_id;
 
         $user->update($attributes);
-        $user->roles()->sync($request->input('roles', []));
 
         if (auth()->user()->isSuperAdmin()) {
+            $rolesToSync = $request->input('roles', []);
+            $superAdminRole = Role::where('name', 'Super Admin')->first();
+            if ($superAdminRole) {
+                if ($user->id === 1) {
+                    if (!in_array($superAdminRole->id, $rolesToSync)) {
+                        $rolesToSync[] = $superAdminRole->id;
+                    }
+                } else {
+                    $rolesToSync = array_filter($rolesToSync, fn($id) => (int)$id !== $superAdminRole->id);
+                }
+            }
+            $user->roles()->sync($rolesToSync);
             $this->handleCharityHomeAssignment($user, $oldCharityHomeId, $user->charity_home_id);
+        } else {
+            $permissionsToSync = $request->input('permissions', []);
+            $user->permissions()->sync($permissionsToSync);
         }
 
         return redirect()->route('users.index')->with('success', 'تم تحديث المستخدم بنجاح.');
@@ -200,7 +239,17 @@ class UserController extends Controller
             ],
             'active' => ['sometimes', 'boolean'],
             'roles' => ['array'],
-            'roles.*' => [Rule::exists('roles', 'id')],
+            'roles.*' => [
+                Rule::exists('roles', 'id')->where(function ($query) {
+                    $query->where('name', '!=', 'Super Admin');
+                }),
+            ],
+            'permissions' => ['sometimes', 'array'],
+            'permissions.*' => [
+                Rule::exists('permissions', 'id')->where(function ($query) {
+                    $query->where('name', 'not like', 'charity_homes.%');
+                }),
+            ],
         ]);
     }
 

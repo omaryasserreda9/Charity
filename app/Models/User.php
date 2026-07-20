@@ -58,6 +58,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class);
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->roles()->where('name', $role)->exists();
@@ -72,6 +77,10 @@ class User extends Authenticatable
     {
         if ($this->isSuperAdmin()) {
             return str_starts_with($permission, 'charity_homes.') || str_starts_with($permission, 'users.');
+        }
+
+        if ($this->permissions()->where('name', $permission)->exists()) {
+            return true;
         }
 
         return $this->roles()
