@@ -51,7 +51,7 @@
                                     <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-primary">تعديل</a>
                                     @endcan
                                     @can('users.delete')
-                                    @if($user->id !== 1)
+                                    @if($user->id !== 1 && $user->id !== auth()->id())
                                         <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline-block" onsubmit="return confirm('هل متأكد من حذف المستخدم؟');">
                                             @csrf
                                             @method('DELETE')

@@ -121,6 +121,8 @@ class UserController extends Controller
         $this->authorize('users.edit');
         $this->ensureUserManageable($user);
 
+        $isSelf = auth()->id() === $user->id;
+
         $roles = Role::where('name', '!=', 'Super Admin')->orderBy('name')->get();
         $charityHomes = auth()->user()->isSuperAdmin()
             ? CharityHome::orderBy('title')->get()
@@ -142,13 +144,15 @@ class UserController extends Controller
             'تعديل المستخدم' => route('users.edit', $user),
         ];
 
-        return view('users.edit', compact('user', 'roles', 'charityHomes', 'permissionGroups', 'breadcrumbs'));
+        return view('users.edit', compact('user', 'roles', 'charityHomes', 'permissionGroups', 'isSelf', 'breadcrumbs'));
     }
 
     public function update(Request $request, User $user): RedirectResponse
     {
         $this->authorize('users.edit');
         $this->ensureUserManageable($user);
+
+        $isSelf = auth()->id() === $user->id;
 
         $attributes = $this->validatedAttributes($request, $user);
 
@@ -164,29 +168,37 @@ class UserController extends Controller
             $attributes['charity_home_id'] = $user->charity_home_id ?? auth()->user()->charity_home_id;
         }
 
-        $attributes['active'] = $request->boolean('active', $user->active ?? true);
+        // Prevent users from changing their own active status
+        if ($isSelf) {
+            $attributes['active'] = $user->active;
+        } else {
+            $attributes['active'] = $request->boolean('active', $user->active ?? true);
+        }
 
         $oldCharityHomeId = $user->charity_home_id;
 
         $user->update($attributes);
 
-        if (auth()->user()->isSuperAdmin()) {
-            $rolesToSync = $request->input('roles', []);
-            $superAdminRole = Role::where('name', 'Super Admin')->first();
-            if ($superAdminRole) {
-                if ($user->id === 1) {
-                    if (!in_array($superAdminRole->id, $rolesToSync)) {
-                        $rolesToSync[] = $superAdminRole->id;
+        // Skip permission/role syncing when the user is editing themselves
+        if (! $isSelf) {
+            if (auth()->user()->isSuperAdmin()) {
+                $rolesToSync = $request->input('roles', []);
+                $superAdminRole = Role::where('name', 'Super Admin')->first();
+                if ($superAdminRole) {
+                    if ($user->id === 1) {
+                        if (!in_array($superAdminRole->id, $rolesToSync)) {
+                            $rolesToSync[] = $superAdminRole->id;
+                        }
+                    } else {
+                        $rolesToSync = array_filter($rolesToSync, fn($id) => (int)$id !== $superAdminRole->id);
                     }
-                } else {
-                    $rolesToSync = array_filter($rolesToSync, fn($id) => (int)$id !== $superAdminRole->id);
                 }
+                $user->roles()->sync($rolesToSync);
+                $this->handleCharityHomeAssignment($user, $oldCharityHomeId, $user->charity_home_id);
+            } else {
+                $permissionsToSync = $request->input('permissions', []);
+                $user->permissions()->sync($permissionsToSync);
             }
-            $user->roles()->sync($rolesToSync);
-            $this->handleCharityHomeAssignment($user, $oldCharityHomeId, $user->charity_home_id);
-        } else {
-            $permissionsToSync = $request->input('permissions', []);
-            $user->permissions()->sync($permissionsToSync);
         }
 
         return redirect()->route('users.index')->with('success', 'تم تحديث المستخدم بنجاح.');
@@ -199,6 +211,11 @@ class UserController extends Controller
 
         if ($user->id === 1) {
             return redirect()->route('users.index')->with('error', 'لا يمكن حذف المستخدم الإداري الرئيسي.');
+        }
+
+        // Prevent users from deleting themselves
+        if (auth()->id() === $user->id) {
+            return redirect()->route('users.index')->with('error', 'لا يمكنك حذف حسابك الخاص.');
         }
 
         $user->roles()->detach();

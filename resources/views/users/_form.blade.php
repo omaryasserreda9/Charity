@@ -1,5 +1,6 @@
 @php
     $user = $user ?? null;
+    $isSelf = $isSelf ?? false;
 @endphp
 @csrf
 
@@ -71,6 +72,7 @@
     ];
 @endphp
 
+@if(!$isSelf)
 <div class="mb-4">
     <label class="form-label d-block mb-3 fw-bold border-bottom pb-2">
         صلاحيات المستخدم
@@ -132,6 +134,7 @@
         <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
     @enderror
 </div>
+@endif
 
 @if(auth()->user()->isSuperAdmin())
     <div class="mb-3">
