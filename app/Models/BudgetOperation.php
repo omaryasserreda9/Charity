@@ -13,6 +13,7 @@ class BudgetOperation extends Model
 
     protected $fillable = [
         'budget_category_id',
+        'donor_id',
         'type',
         'donor_name',
         'receipt_number',
@@ -28,5 +29,10 @@ class BudgetOperation extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(BudgetCategory::class, 'budget_category_id');
+    }
+
+    public function donor(): BelongsTo
+    {
+        return $this->belongsTo(Donor::class);
     }
 }

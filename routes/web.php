@@ -19,6 +19,7 @@ use App\Http\Controllers\InventoryCategoryController;
 use App\Http\Controllers\InventoryOperationController;
 use App\Http\Controllers\CharityHomeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DonorController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::resource('budget-categories', BudgetCategoryController::class);
     Route::resource('budget-operations', BudgetOperationController::class);
+    Route::get('donors/search', [DonorController::class, 'search'])->name('donors.search');
+    Route::resource('donors', DonorController::class);
     Route::resource('inventory-categories', InventoryCategoryController::class);
     Route::resource('inventory-operations', InventoryOperationController::class);
     Route::resource('humanitarian-cases', HumanitarianCaseController::class);

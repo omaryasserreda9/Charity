@@ -21,6 +21,7 @@
         ['label' => 'لوحة التحكم', 'icon' => 'fa-chart-line', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
         ['label' => 'بنود الميزانية', 'icon' => 'fa-tags', 'route' => 'budget-categories.index', 'active' => request()->routeIs('budget-categories.*'), 'permission' => 'budget_categories.view'],
         ['label' => 'عمليات الميزانية', 'icon' => 'fa-wallet', 'route' => 'budget-operations.index', 'active' => request()->routeIs('budget-operations.*'), 'permission' => 'budget_operations.view'],
+        ['label' => 'المتبرعون', 'icon' => 'fa-hand-holding-heart', 'route' => 'donors.index', 'active' => request()->routeIs('donors.*'), 'permission' => 'donors.view'],
         ['label' => 'بنود المخزون', 'icon' => 'fa-boxes-stacked', 'route' => 'inventory-categories.index', 'active' => request()->routeIs('inventory-categories.*'), 'permission' => 'inventory_categories.view'],
         ['label' => 'عمليات المخزون', 'icon' => 'fa-warehouse', 'route' => 'inventory-operations.index', 'active' => request()->routeIs('inventory-operations.*'), 'permission' => 'inventory_operations.view'],
         ['label' => 'الحالات الإنسانية', 'icon' => 'fa-users', 'route' => 'humanitarian-cases.index', 'active' => request()->routeIs('humanitarian-cases.*') || request()->routeIs('humanitarian-case-files.*'), 'permission' => 'humanitarian_cases.view'],

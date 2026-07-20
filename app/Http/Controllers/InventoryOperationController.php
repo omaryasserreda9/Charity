@@ -55,6 +55,13 @@ class InventoryOperationController extends Controller
         $attributes = $this->validatedAttributes($request);
         $this->ensureStockIsEnough($attributes);
 
+        if ($attributes['type'] === 'in' && is_null($attributes['donor_id']) && !empty($attributes['donor_name'])) {
+            $donor = \App\Models\Donor::create([
+                'name' => $attributes['donor_name'],
+            ]);
+            $attributes['donor_id'] = $donor->id;
+        }
+
         InventoryOperation::create($attributes);
 
         return redirect()->route('inventory-operations.index')->with('success', 'تم حفظ عملية المخزون بنجاح.');
@@ -88,6 +95,13 @@ class InventoryOperationController extends Controller
         $attributes = $this->validatedAttributes($request);
         $this->ensureStockIsEnough($attributes, $inventoryOperation);
 
+        if ($attributes['type'] === 'in' && is_null($attributes['donor_id']) && !empty($attributes['donor_name'])) {
+            $donor = \App\Models\Donor::create([
+                'name' => $attributes['donor_name'],
+            ]);
+            $attributes['donor_id'] = $donor->id;
+        }
+
         $inventoryOperation->update($attributes);
 
         return redirect()->route('inventory-operations.index')->with('success', 'تم تحديث عملية المخزون بنجاح.');
@@ -102,8 +116,31 @@ class InventoryOperationController extends Controller
 
     private function validatedAttributes(Request $request): array
     {
+        $type = $request->input('type');
+        if ($type === 'in') {
+            $donorSelector = $request->input('donor_selector');
+            if (is_numeric($donorSelector)) {
+                $request->merge(['donor_id' => $donorSelector]);
+                $donor = \App\Models\Donor::find($donorSelector);
+                if ($donor) {
+                    $request->merge(['donor_name' => $donor->name]);
+                }
+            } else {
+                $request->merge([
+                    'donor_name' => $donorSelector,
+                    'donor_id' => null,
+                ]);
+            }
+        } else {
+            $request->merge([
+                'donor_name' => $request->input('donor_name_text'),
+                'donor_id' => null,
+            ]);
+        }
+
         return $request->validate([
             'inventory_category_id' => ['nullable', 'exists:inventory_categories,id'],
+            'donor_id' => ['nullable', 'exists:donors,id'],
             'type' => ['required', Rule::in(['in', 'out'])],
             'donor_name' => ['required', 'string', 'max:255'],
             'receipt_number' => ['nullable', 'string', 'max:255', 'required_if:type,in'],

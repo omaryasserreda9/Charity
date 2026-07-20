@@ -13,6 +13,7 @@ class RolePermissionSeeder extends Seeder
         'dashboard',
         'budget_categories',
         'budget_operations',
+        'donors',
         'inventory_categories',
         'inventory_operations',
         'humanitarian_cases',

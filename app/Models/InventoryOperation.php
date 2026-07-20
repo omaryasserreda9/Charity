@@ -13,6 +13,7 @@ class InventoryOperation extends Model
 
     protected $fillable = [
         'inventory_category_id',
+        'donor_id',
         'type',
         'donor_name',
         'receipt_number',
@@ -29,5 +30,10 @@ class InventoryOperation extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(InventoryCategory::class, 'inventory_category_id');
+    }
+
+    public function donor(): BelongsTo
+    {
+        return $this->belongsTo(Donor::class);
     }
 }
