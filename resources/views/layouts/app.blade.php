@@ -27,7 +27,7 @@
         ['label' => 'المناطق', 'icon' => 'fa-map-location-dot', 'route' => 'districts.index', 'active' => request()->routeIs('districts.*'), 'permission' => 'districts.view'],
         ['label' => 'بنود الحملات', 'icon' => 'fa-tags', 'route' => 'campaign-categories.index', 'active' => request()->routeIs('campaign-categories.*'), 'permission' => 'campaign_categories.view'],
         ['label' => 'الحملات', 'icon' => 'fa-bullhorn', 'route' => 'campaigns.index', 'active' => request()->routeIs('campaigns.*'), 'permission' => 'campaigns.view'],
-        ['label' => 'الدلائل', 'icon' => 'fa-address-book', 'route' => 'case-referrers.index', 'active' => request()->routeIs('case-referrers.*'), 'permission' => 'case_referrers.view'],
+        ['label' => 'دليل المنطقة', 'icon' => 'fa-address-book', 'route' => 'case-referrers.index', 'active' => request()->routeIs('case-referrers.*'), 'permission' => 'case_referrers.view'],
         ['label' => 'بيوت الجمعيات', 'icon' => 'fa-home', 'route' => 'charity-homes.index', 'active' => request()->routeIs('charity-homes.*'), 'permission' => 'charity_homes.view'],
         ['label' => 'المستخدمون', 'icon' => 'fa-user', 'route' => 'users.index', 'active' => request()->routeIs('users.*'), 'permission' => 'users.view'],
     ];
